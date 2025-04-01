@@ -1,0 +1,40 @@
+TÉRMINOS DE LICENCIA DE ESCALA EMPA-CELA
+
+DERECHOS DE AUTOR © 2025 ESCALA EMPA-CELA
+
+TODOS LOS DERECHOS RESERVADOS
+
+Este software y su documentación son propiedad intelectual protegida por las leyes de derechos de autor. El uso de este software está sujeto a los siguientes términos y condiciones:
+
+0. AVISO IMPORTANTE - EXENCIÓN DE RESPONSABILIDAD
+   ESTA ESCALA NO HA SIDO VALIDADA CLÍNICAMENTE. Los autores y propietarios de esta herramienta NO ASUMEN RESPONSABILIDAD DE NINGÚN TIPO por su uso. Los resultados proporcionados son meramente orientativos y no deben utilizarse como única herramienta para tomar decisiones clínicas. Esta herramienta no sustituye el juicio profesional ni la valoración médica adecuada. Consulte siempre con profesionales sanitarios cualificados.
+
+1. PROPIEDAD INTELECTUAL
+   El software Escala EMPA-CELA, incluyendo pero no limitado a su código fuente, documentación, diseño de interfaz de usuario, algoritmos y metodología, es propiedad exclusiva de sus autores y está protegido por leyes de propiedad intelectual y tratados internacionales.
+
+2. LICENCIA DE USO
+   Se concede una licencia limitada, no exclusiva e intransferible para usar el software Escala EMPA-CELA únicamente para fines profesionales en el ámbito de la salud. Esta licencia no constituye una transferencia de propiedad.
+
+3. RESTRICCIONES
+   Queda expresamente prohibido:
+   a) Copiar, modificar, adaptar o redistribuir el software sin autorización expresa y por escrito.
+   b) Realizar ingeniería inversa, descompilar o desensamblar el software.
+   c) Utilizar el software para fines comerciales no autorizados.
+   d) Remover o alterar cualquier aviso de derechos de autor o marca registrada del software.
+
+4. EXENCIÓN DE RESPONSABILIDAD
+   El software se proporciona "tal cual", sin garantía de ningún tipo, expresa o implícita. Los autores no son responsables por daños directos, indirectos, incidentales, especiales o consecuentes que resulten del uso o la imposibilidad de usar el software.
+
+5. DECISIONES CLÍNICAS
+   La Escala EMPA-CELA es una herramienta de apoyo a la decisión clínica. La responsabilidad final sobre cualquier decisión médica recae exclusivamente en el profesional de la salud que utilice esta herramienta.
+
+6. TERMINACIÓN
+   Esta licencia terminará automáticamente si se incumple cualquiera de sus términos y condiciones. Al terminar la licencia, el usuario deberá cesar todo uso del software y destruir todas las copias.
+
+7. LEY APLICABLE
+   Este acuerdo se regirá e interpretará de acuerdo con las leyes del país de origen, sin dar efecto a cualquier principio de conflictos de leyes.
+
+8. ACUERDO COMPLETO
+   Este documento constituye el acuerdo completo entre las partes con respecto al software y sustituye todos los acuerdos previos o contemporáneos, ya sean escritos o verbales.
+
+Al utilizar el software Escala EMPA-CELA, usted acepta cumplir con los términos y condiciones de esta licencia. 
