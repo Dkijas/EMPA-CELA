@@ -77,9 +77,11 @@ No requiere instalación. El sistema funciona en cualquier navegador web moderno
 - JavaScript (ES6+)
 
 ## Derechos de Autor
-© 2025 Escala EMPA-CELA - Todos los derechos reservados.
+© 2025 Escala EMPA-CELA - Víctor Ramón Aguilera Díaz - Todos los derechos reservados.
 
 Este proyecto está protegido por derechos de autor y se presenta a la comisión de derechos de autor como una herramienta original para la evaluación y priorización de atención médica.
 
 ## Contacto
-Para más información sobre este proyecto, por favor contacte al desarrollador. 
+Para más información sobre este proyecto, por favor contacte al autor:
+
+Víctor Ramón Aguilera Díaz 
