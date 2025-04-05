@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnImprimir = document.getElementById('btn-imprimir');
     const resultadoDiv = document.getElementById('resultado');
     
+    // Configuración del sistema de pestañas
+    setupTabs();
+    
     // Establecer la fecha actual en el campo de fecha de evaluación al cargar
     const today = new Date();
     const formattedDate = today.toISOString().substr(0, 10);
@@ -22,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     updateProgressBar();
+    
+    // Configuración para la sección de Anatomía de Enfermedad
+    setupAnatomySection();
     
     // Función para calcular la puntuación total
     function calcularPuntuacion() {
@@ -608,5 +614,212 @@ function generateSimplePDF() {
             console.error("Error al guardar PDF simplificado:", e);
             window.open(URL.createObjectURL(pdf.output('blob')));
         }
+    });
+}
+
+// Funcionalidad para la sección de Anatomía de Enfermedad
+function setupAnatomySection() {
+    const anatomyImg = document.getElementById('anatomia-img');
+    const anatomyOverlay = document.getElementById('anatomy-overlay');
+    const selectedAreasList = document.getElementById('selected-areas-list');
+    const severityLevel = document.getElementById('severity-level');
+    const addAreaBtn = document.getElementById('add-area-btn');
+    
+    // Áreas anatómicas predefinidas con sus coordenadas
+    const anatomyAreas = [
+        { name: "Cabeza - Músculos faciales", x: 50, y: 10, radius: 8 },
+        { name: "Cuello", x: 50, y: 20, radius: 8 },
+        { name: "Hombro derecho", x: 35, y: 25, radius: 6 },
+        { name: "Hombro izquierdo", x: 65, y: 25, radius: 6 },
+        { name: "Pecho - Pectoral derecho", x: 40, y: 30, radius: 7 },
+        { name: "Pecho - Pectoral izquierdo", x: 60, y: 30, radius: 7 },
+        { name: "Brazo derecho - Bíceps", x: 30, y: 35, radius: 5 },
+        { name: "Brazo izquierdo - Bíceps", x: 70, y: 35, radius: 5 },
+        { name: "Brazo derecho - Tríceps", x: 27, y: 38, radius: 5 },
+        { name: "Brazo izquierdo - Tríceps", x: 73, y: 38, radius: 5 },
+        { name: "Antebrazo derecho", x: 25, y: 45, radius: 5 },
+        { name: "Antebrazo izquierdo", x: 75, y: 45, radius: 5 },
+        { name: "Mano derecha", x: 20, y: 55, radius: 4 },
+        { name: "Mano izquierda", x: 80, y: 55, radius: 4 },
+        { name: "Abdomen superior", x: 50, y: 40, radius: 8 },
+        { name: "Abdomen inferior", x: 50, y: 50, radius: 8 },
+        { name: "Cadera derecha", x: 40, y: 60, radius: 6 },
+        { name: "Cadera izquierda", x: 60, y: 60, radius: 6 },
+        { name: "Muslo derecho", x: 40, y: 70, radius: 7 },
+        { name: "Muslo izquierdo", x: 60, y: 70, radius: 7 },
+        { name: "Rodilla derecha", x: 40, y: 80, radius: 5 },
+        { name: "Rodilla izquierda", x: 60, y: 80, radius: 5 },
+        { name: "Pierna derecha", x: 40, y: 88, radius: 6 },
+        { name: "Pierna izquierda", x: 60, y: 88, radius: 6 },
+        { name: "Pie derecho", x: 40, y: 97, radius: 5 },
+        { name: "Pie izquierdo", x: 60, y: 97, radius: 5 }
+    ];
+    
+    let selectedAreas = [];
+    let currentHoveredArea = null;
+    
+    // Función para convertir coordenadas porcentuales a píxeles
+    function getPixelCoordinates(area) {
+        if (!anatomyImg) return null;
+        
+        const imgWidth = anatomyImg.clientWidth;
+        const imgHeight = anatomyImg.clientHeight;
+        
+        return {
+            x: (area.x / 100) * imgWidth,
+            y: (area.y / 100) * imgHeight,
+            radius: (area.radius / 100) * Math.min(imgWidth, imgHeight)
+        };
+    }
+    
+    // Función para crear marcadores en las áreas afectadas
+    function createMarker(area, severity) {
+        const coords = getPixelCoordinates(area);
+        if (!coords) return;
+        
+        const marker = document.createElement('div');
+        marker.className = `anatomy-marker marker-${severity}`;
+        marker.style.left = `${coords.x - coords.radius}px`;
+        marker.style.top = `${coords.y - coords.radius}px`;
+        marker.style.width = `${coords.radius * 2}px`;
+        marker.style.height = `${coords.radius * 2}px`;
+        marker.setAttribute('data-area', area.name);
+        
+        anatomyOverlay.appendChild(marker);
+    }
+    
+    // Función para agregar un área a la lista de seleccionadas
+    function addSelectedArea() {
+        if (!currentHoveredArea) return;
+        
+        const severity = severityLevel.value;
+        const areaName = currentHoveredArea.name;
+        
+        // Verificar si el área ya está seleccionada
+        const existingIndex = selectedAreas.findIndex(area => area.name === areaName);
+        
+        if (existingIndex !== -1) {
+            // Actualizar la severidad si ya existe
+            selectedAreas[existingIndex].severity = severity;
+            // Eliminar el marcador anterior
+            const oldMarker = anatomyOverlay.querySelector(`[data-area="${areaName}"]`);
+            if (oldMarker) {
+                anatomyOverlay.removeChild(oldMarker);
+            }
+        } else {
+            // Añadir nueva área
+            selectedAreas.push({
+                name: areaName,
+                severity: severity
+            });
+        }
+        
+        // Crear marcador
+        createMarker(currentHoveredArea, severity);
+        
+        // Actualizar la lista de áreas seleccionadas
+        updateSelectedAreasList();
+    }
+    
+    // Función para actualizar la lista visual de áreas seleccionadas
+    function updateSelectedAreasList() {
+        selectedAreasList.innerHTML = '';
+        
+        if (selectedAreas.length === 0) {
+            const emptyItem = document.createElement('li');
+            emptyItem.textContent = 'Ninguna área seleccionada';
+            selectedAreasList.appendChild(emptyItem);
+            return;
+        }
+        
+        selectedAreas.forEach(area => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <strong>${area.name}</strong> - Afectación: <span class="severity-${area.severity}">${area.severity}</span>
+                <button class="remove-area-btn" data-area="${area.name}">×</button>
+            `;
+            selectedAreasList.appendChild(listItem);
+            
+            // Añadir evento para eliminar áreas
+            const removeBtn = listItem.querySelector('.remove-area-btn');
+            removeBtn.addEventListener('click', function() {
+                removeArea(area.name);
+            });
+        });
+    }
+    
+    // Función para eliminar un área seleccionada
+    function removeArea(areaName) {
+        // Eliminar de la lista de áreas seleccionadas
+        selectedAreas = selectedAreas.filter(area => area.name !== areaName);
+        
+        // Eliminar el marcador visual
+        const marker = anatomyOverlay.querySelector(`[data-area="${areaName}"]`);
+        if (marker) {
+            anatomyOverlay.removeChild(marker);
+        }
+        
+        // Actualizar la lista visual
+        updateSelectedAreasList();
+    }
+    
+    // Evento para añadir un área cuando se hace clic en el botón
+    if (addAreaBtn) {
+        addAreaBtn.addEventListener('click', addSelectedArea);
+    }
+    
+    // Inicializar la lista de áreas seleccionadas
+    updateSelectedAreasList();
+    
+    // Evento para detectar cuando el mouse se posiciona sobre la imagen
+    if (anatomyImg) {
+        anatomyImg.addEventListener('mousemove', function(e) {
+            const rect = anatomyImg.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            
+            // Encontrar si el cursor está sobre un área anatómica
+            let foundArea = null;
+            for (const area of anatomyAreas) {
+                const distance = Math.sqrt(Math.pow(x - area.x, 2) + Math.pow(y - area.y, 2));
+                if (distance <= area.radius) {
+                    foundArea = area;
+                    break;
+                }
+            }
+            
+            // Actualizar el área actual
+            currentHoveredArea = foundArea;
+            
+            // Cambiar el cursor si está sobre un área
+            anatomyImg.style.cursor = foundArea ? 'pointer' : 'default';
+        });
+        
+        // Evento para seleccionar un área al hacer clic en la imagen
+        anatomyImg.addEventListener('click', function() {
+            if (currentHoveredArea) {
+                // Preseleccionar el área al hacer clic
+                addSelectedArea();
+            }
+        });
+    }
+}
+
+// Función para configurar el sistema de pestañas
+function setupTabs() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Desactivar todas las pestañas
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+            
+            // Activar la pestaña seleccionada
+            const tabId = this.getAttribute('data-tab');
+            this.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
     });
 } 
