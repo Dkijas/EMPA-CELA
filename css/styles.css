@@ -376,7 +376,21 @@ input[type="radio"]:checked + span {
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
+}
+
+.anatomy-circle {
+  position: absolute;
+  background-color: rgba(100, 100, 100, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+.anatomy-circle:hover {
+  transform: scale(1.1);
+  background-color: rgba(100, 100, 100, 0.5);
 }
 
 .anatomy-tooltip {
@@ -474,7 +488,55 @@ input[type="radio"]:checked + span {
   border-radius: 50%;
   background-color: rgba(255, 0, 0, 0.5);
   border: 2px solid rgba(255, 0, 0, 0.8);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.anatomy-marker:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+#temp-marker {
+  background-color: rgba(0, 150, 255, 0.5);
+  border-color: rgba(0, 150, 255, 0.8);
+  animation: pulsate 1.5s infinite ease-in-out;
+  box-shadow: 0 0 5px rgba(0, 150, 255, 0.8);
+  z-index: 11;
+}
+
+#cursor-indicator {
   pointer-events: none;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(100, 200, 255, 0.3);
+  border: 2px dashed rgba(100, 200, 255, 0.8);
+  border-radius: 50%;
+  position: absolute;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes pulsate {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+}
+
+.area-coords {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin-left: 5px;
+}
+
+.no-areas {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
 }
 
 .marker-leve {
@@ -1011,4 +1073,218 @@ select[multiple] option:checked {
   color: #666;
   font-size: 0.85rem;
   font-style: italic;
+}
+
+/* Estilos para áreas predefinidas vs personalizadas */
+.predefined-marker {
+  background-color: rgba(100, 200, 100, 0.7) !important;
+  border: 3px solid rgba(50, 180, 50, 1) !important;
+  box-shadow: 0 0 10px rgba(0, 150, 0, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
+  z-index: 25;
+  width: 20px !important;
+  height: 20px !important;
+  animation: pulsateGreen 2s infinite;
+}
+
+@keyframes pulsateGreen {
+  0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(0, 150, 0, 0.5); }
+  70% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 0 10px rgba(0, 150, 0, 0); }
+  100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(0, 150, 0, 0); }
+}
+
+.predefined-marker:hover {
+  background-color: rgba(100, 200, 100, 0.9) !important;
+  transform: translate(-50%, -50%) scale(1.3) !important;
+  z-index: 35;
+  box-shadow: 0 0 15px rgba(0, 150, 0, 1), inset 0 0 8px rgba(255, 255, 255, 0.7);
+}
+
+.selected-predefined {
+  border-width: 3px !important;
+  z-index: 15;
+}
+
+.selected-custom {
+  border-width: 2px;
+  z-index: 10;
+}
+
+.predefined-area-item {
+  background-color: rgba(240, 255, 240, 0.8) !important;
+  border-left: 4px solid #4CAF50;
+}
+
+.predefined-indicator {
+  background-color: #4CAF50;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+.custom-indicator {
+  background-color: #3498db;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+.area-type {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.area-description {
+  font-style: italic;
+  color: #666;
+  margin-top: 5px;
+  font-size: 0.9em;
+}
+
+/* Campo de entrada para nombre personalizado */
+#custom-name-container {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #eaeaea;
+}
+
+#custom-name-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+#custom-area-name {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Mejorar visualización de las áreas seleccionadas */
+.area-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.area-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.area-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.area-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.area-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.btn-edit, .btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.btn-edit {
+  color: #3498db;
+}
+
+.btn-edit:hover {
+  background-color: #eaf5ff;
+}
+
+.btn-delete {
+  color: #e74c3c;
+}
+
+.btn-delete:hover {
+  background-color: #fdedeb;
+}
+
+/* Estilos para el gráfico de progresión temporal */
+.chart-container {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+    min-height: 300px;
+}
+
+.chart-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+    pointer-events: none;
+    max-width: 200px;
+}
+
+.chart-point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+}
+
+.chart-point:hover {
+    transform: scale(1.5) translate(-50%, 50%);
+    z-index: 100;
+}
+
+.dot-leve {
+    background-color: #CCB800 !important;
+}
+
+.dot-moderada, .dot-moderado {
+    background-color: #CC7000 !important;
+}
+
+.dot-grave, .dot-severo, .dot-severa {
+    background-color: #CC0000 !important;
+}
+
+.empty-chart-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    background-color: #f9f9f9;
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.empty-chart-message::before {
+    content: "📊";
+    font-size: 32px;
+    margin-bottom: 10px;
 } 

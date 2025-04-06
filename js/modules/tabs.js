@@ -51,9 +51,13 @@ const EMPA_TABS = {
         const selectedButton = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
         const selectedPane = document.getElementById(tabId);
         
+        console.log(`Encontrado botón: ${selectedButton ? 'Sí' : 'No'}, panel: ${selectedPane ? 'Sí' : 'No'}`);
+        
         if (selectedButton && selectedPane) {
             selectedButton.classList.add('active');
             selectedPane.classList.add('active');
+            
+            console.log(`Activada pestaña: ${tabId}`);
             
             // Notificar el cambio de pestaña a otros módulos
             this.notifyTabChange(tabId);
@@ -66,6 +70,7 @@ const EMPA_TABS = {
     notifyTabChange: function(tabId) {
         // Si se cambia a la pestaña de anatomía, inicializar/actualizar esa vista
         if (tabId === 'anatomia-tab' && typeof EMPA_ANATOMY !== 'undefined') {
+            console.log('Notificando a EMPA_ANATOMY sobre cambio de pestaña a anatomía');
             EMPA_ANATOMY.onTabActivated();
         }
         

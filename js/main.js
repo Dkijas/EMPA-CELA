@@ -6,7 +6,76 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar la aplicación
     initApp();
+    
+    // Configurar manejo de tabs
+    setupTabs();
+    
+    // Inicializar módulos específicos
+    initializeModules();
 });
+
+// Configurar el sistema de pestañas
+function setupTabs() {
+    // Seleccionar todos los botones de pestañas
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    
+    // Agregar event listeners a cada botón
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Obtener el tab objetivo
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Desactivar todos los botones y pestañas
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            
+            // Activar el botón y pestaña seleccionados
+            this.classList.add('active');
+            const tabPane = document.getElementById(targetTab);
+            if (tabPane) {
+                tabPane.classList.add('active');
+                
+                // Disparar evento específico según la pestaña activada
+                if (targetTab === 'anatomia-tab') {
+                    console.log('Tab de anatomía seleccionado - activando módulo');
+                    if (typeof EMPA_ANATOMY !== 'undefined' && EMPA_ANATOMY.onTabActivated) {
+                        EMPA_ANATOMY.onTabActivated();
+                        
+                        // También actualizar la progresión cuando se muestra la pestaña de anatomía
+                        if (typeof EMPA_PROGRESSION !== 'undefined' && EMPA_PROGRESSION.getProgressionFromSelectedAreas) {
+                            setTimeout(function() {
+                                EMPA_PROGRESSION.getProgressionFromSelectedAreas();
+                            }, 300);
+                        }
+                    }
+                }
+            }
+        });
+    });
+}
+
+// Inicializar módulos específicos
+function initializeModules() {
+    // Inicializar el módulo de anatomía
+    if (typeof EMPA_ANATOMY !== 'undefined') {
+        setTimeout(function() {
+            console.log('Inicializando módulo de anatomía desde main.js...');
+            EMPA_ANATOMY.init();
+        }, 500);
+    } else {
+        console.error('El módulo de anatomía no está disponible');
+    }
+    
+    // Inicializar el módulo de progresión
+    if (typeof EMPA_PROGRESSION !== 'undefined') {
+        setTimeout(function() {
+            console.log('Inicializando módulo de progresión desde main.js...');
+            EMPA_PROGRESSION.init();
+        }, 600);
+    } else {
+        console.error('El módulo de progresión no está disponible');
+    }
+}
 
 // Función para inicializar la aplicación
 function initApp() {
