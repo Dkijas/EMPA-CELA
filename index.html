@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escala EMPA-CELA Interactiva</title>
   <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Cargar módulos -->
+  <script src="js/modules/core.js"></script>
+  <script src="js/modules/tabs.js"></script>
+  <script src="js/modules/anatomy.js"></script>
+  <script src="js/modules/progression.js"></script>
+  <script src="js/modules/calculation.js"></script>
+  <script src="js/modules/pdf.js"></script>
+  <script src="js/main.js"></script>
 </head>
 <body>
   <div class="container">
@@ -372,7 +381,7 @@
             
             <div class="form-group">
               <label for="intervention">Intervención recomendada:</label>
-              <select id="intervention" class="form-input">
+              <select id="intervention" class="form-input" multiple size="5">
                 <option value="ninguna">Ninguna - Observación</option>
                 <option value="fisioterapia">Fisioterapia</option>
                 <option value="terapia-ocupacional">Terapia ocupacional</option>
@@ -382,6 +391,7 @@
                 <option value="ayudas-tecnicas">Ayudas técnicas específicas</option>
                 <option value="farmacologica">Tratamiento farmacológico</option>
               </select>
+              <small class="form-hint">Puede seleccionar múltiples opciones manteniendo presionada la tecla Ctrl (o Cmd en Mac) mientras hace clic.</small>
             </div>
             
             <button type="button" id="add-area-btn" class="btn-secondary">Añadir área seleccionada</button>
@@ -466,9 +476,16 @@
     </div>
   </div>
   
+  <div class="disclaimer-footer">
+    Esta herramienta no ha sido validada clínicamente y sus resultados deben considerarse meramente orientativos. 
+    Consulte siempre con profesionales sanitarios cualificados.
+  </div>
+  
+  <!-- Fin del contenedor principal -->
+  </div>
+  
   <!-- Inclusión de bibliotecas necesarias desde CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="js/script.js"></script>
 </body>
 </html> 

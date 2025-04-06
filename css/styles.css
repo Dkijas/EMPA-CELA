@@ -979,4 +979,36 @@ input[type="radio"]:checked + span {
 
 #compare-btn {
   margin-top: 10px;
+}
+
+/* Estilos para el selector múltiple */
+select[multiple] {
+  height: auto;
+  min-height: 120px;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+select[multiple] option {
+  padding: 5px;
+  margin-bottom: 3px;
+  border-radius: 3px;
+}
+
+select[multiple] option:hover {
+  background-color: #f0f0f0;
+}
+
+select[multiple] option:checked {
+  background-color: #e9f5ff;
+  color: #2c7be5;
+  font-weight: 500;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+  font-size: 0.85rem;
+  font-style: italic;
 } 
