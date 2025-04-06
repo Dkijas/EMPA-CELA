@@ -328,21 +328,101 @@
           <div class="anatomy-image-container">
             <img src="img/anatomia-muscular.jpg" alt="Mapa anatómico muscular" id="anatomia-img" class="anatomy-image">
             <div class="anatomy-overlay" id="anatomy-overlay"></div>
+            <div id="anatomy-tooltip" class="anatomy-tooltip"></div>
           </div>
-          <div class="anatomy-selection">
-            <div class="selected-areas">
-              <h4>Áreas seleccionadas:</h4>
-              <ul id="selected-areas-list"></ul>
-            </div>
-            <div class="severity-selection">
-              <h4>Severidad de la afectación:</h4>
+          
+          <!-- Formulario detallado para cada área seleccionada -->
+          <div id="area-details-form" class="area-details-form">
+            <h4>Detalles del área: <span id="area-name"></span></h4>
+            <p class="area-category">Categoría: <span id="area-category"></span></p>
+            
+            <div class="form-group">
+              <label for="severity-level">Nivel de severidad:</label>
               <select id="severity-level" class="form-input">
                 <option value="leve">Leve</option>
                 <option value="moderada">Moderada</option>
                 <option value="grave">Grave</option>
               </select>
-              <button type="button" id="add-area-btn" class="btn-secondary">Añadir área seleccionada</button>
             </div>
+            
+            <div class="form-group">
+              <label for="evolution-level">Evolución:</label>
+              <select id="evolution-level" class="form-input">
+                <option value="estable">Estable</option>
+                <option value="progresiva-lenta">Progresiva lenta</option>
+                <option value="progresiva-rapida">Progresiva rápida</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="symptom-start-date">Fecha de inicio de síntomas:</label>
+              <input type="date" id="symptom-start-date" class="form-input">
+            </div>
+            
+            <div class="form-group">
+              <label for="functional-impact">Impacto funcional:</label>
+              <select id="functional-impact" class="form-input">
+                <option value="sin-impacto">Sin impacto funcional</option>
+                <option value="leve">Impacto leve - No afecta actividades diarias</option>
+                <option value="moderado">Impacto moderado - Limita algunas actividades</option>
+                <option value="severo">Impacto severo - Requiere asistencia</option>
+                <option value="completo">Pérdida completa de la función</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="intervention">Intervención recomendada:</label>
+              <select id="intervention" class="form-input">
+                <option value="ninguna">Ninguna - Observación</option>
+                <option value="fisioterapia">Fisioterapia</option>
+                <option value="terapia-ocupacional">Terapia ocupacional</option>
+                <option value="logopedia">Logopedia</option>
+                <option value="nutricional">Apoyo nutricional</option>
+                <option value="respiratoria">Asistencia respiratoria</option>
+                <option value="ayudas-tecnicas">Ayudas técnicas específicas</option>
+                <option value="farmacologica">Tratamiento farmacológico</option>
+              </select>
+            </div>
+            
+            <button type="button" id="add-area-btn" class="btn-secondary">Añadir área seleccionada</button>
+            <button type="button" id="cancel-area-btn" class="btn-outline">Cancelar</button>
+          </div>
+          
+          <div class="anatomy-selection">
+            <div class="selected-areas">
+              <h4>Áreas afectadas:</h4>
+              <ul id="selected-areas-list"></ul>
+            </div>
+          </div>
+          
+          <!-- Sección para visualización longitudinal -->
+          <div class="progression-chart-container">
+            <h4>Evolución temporal de la enfermedad</h4>
+            <div id="progression-chart"></div>
+            <p class="chart-legend">
+              <span class="legend-item"><span class="dot dot-leve"></span> Leve</span>
+              <span class="legend-item"><span class="dot dot-moderada"></span> Moderada</span>
+              <span class="legend-item"><span class="dot dot-grave"></span> Grave</span>
+            </p>
+          </div>
+          
+          <!-- Comparativa entre evaluaciones -->
+          <div class="evaluation-comparison">
+            <h4>Comparativa de evaluaciones</h4>
+            <div class="comparison-selector">
+              <label for="comparison-date1">Primera evaluación:</label>
+              <select id="comparison-date1" class="form-input">
+                <option value="">Seleccionar fecha...</option>
+              </select>
+              
+              <label for="comparison-date2">Segunda evaluación:</label>
+              <select id="comparison-date2" class="form-input">
+                <option value="">Seleccionar fecha...</option>
+              </select>
+              
+              <button type="button" id="compare-btn" class="btn-secondary">Comparar</button>
+            </div>
+            <div id="comparison-results" class="comparison-results"></div>
           </div>
         </div>
       </div>

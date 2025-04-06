@@ -625,38 +625,137 @@ function setupAnatomySection() {
     const severityLevel = document.getElementById('severity-level');
     const addAreaBtn = document.getElementById('add-area-btn');
     
-    // Áreas anatómicas predefinidas con sus coordenadas
+    // Limpiar overlay para eliminar posibles marcadores previos
+    if (anatomyOverlay) {
+        anatomyOverlay.innerHTML = '';
+    }
+    
+    // Áreas anatómicas predefinidas con sus coordenadas, refinadas según inervación, función y áreas específicas para ELA
     const anatomyAreas = [
-        { name: "Cabeza - Músculos faciales", x: 50, y: 10, radius: 8 },
-        { name: "Cuello", x: 50, y: 20, radius: 8 },
-        { name: "Hombro derecho", x: 35, y: 25, radius: 6 },
-        { name: "Hombro izquierdo", x: 65, y: 25, radius: 6 },
-        { name: "Pecho - Pectoral derecho", x: 40, y: 30, radius: 7 },
-        { name: "Pecho - Pectoral izquierdo", x: 60, y: 30, radius: 7 },
-        { name: "Brazo derecho - Bíceps", x: 30, y: 35, radius: 5 },
-        { name: "Brazo izquierdo - Bíceps", x: 70, y: 35, radius: 5 },
-        { name: "Brazo derecho - Tríceps", x: 27, y: 38, radius: 5 },
-        { name: "Brazo izquierdo - Tríceps", x: 73, y: 38, radius: 5 },
-        { name: "Antebrazo derecho", x: 25, y: 45, radius: 5 },
-        { name: "Antebrazo izquierdo", x: 75, y: 45, radius: 5 },
-        { name: "Mano derecha", x: 20, y: 55, radius: 4 },
-        { name: "Mano izquierda", x: 80, y: 55, radius: 4 },
-        { name: "Abdomen superior", x: 50, y: 40, radius: 8 },
-        { name: "Abdomen inferior", x: 50, y: 50, radius: 8 },
-        { name: "Cadera derecha", x: 40, y: 60, radius: 6 },
-        { name: "Cadera izquierda", x: 60, y: 60, radius: 6 },
-        { name: "Muslo derecho", x: 40, y: 70, radius: 7 },
-        { name: "Muslo izquierdo", x: 60, y: 70, radius: 7 },
-        { name: "Rodilla derecha", x: 40, y: 80, radius: 5 },
-        { name: "Rodilla izquierda", x: 60, y: 80, radius: 5 },
-        { name: "Pierna derecha", x: 40, y: 88, radius: 6 },
-        { name: "Pierna izquierda", x: 60, y: 88, radius: 6 },
-        { name: "Pie derecho", x: 40, y: 97, radius: 5 },
-        { name: "Pie izquierdo", x: 60, y: 97, radius: 5 }
+        // Región bulbar - crítica en ELA
+        { name: "Lengua", x: 50, y: 13, radius: 4, category: "bulbar" },
+        { name: "Músculos faciales", x: 50, y: 10, radius: 8, category: "bulbar" },
+        { name: "Músculos de la masticación", x: 46, y: 12, radius: 4, category: "bulbar" },
+        { name: "Musculatura laríngea", x: 50, y: 20, radius: 3, category: "bulbar" },
+        { name: "Musculatura faríngea (deglución)", x: 50, y: 22, radius: 3, category: "bulbar" },
+        
+        // Región cervical
+        { name: "Flexores del cuello", x: 50, y: 25, radius: 5, category: "cervical" },
+        { name: "Extensores del cuello", x: 50, y: 23, radius: 5, category: "cervical" },
+        
+        // Musculatura respiratoria - crítica en ELA
+        { name: "Diafragma", x: 50, y: 37, radius: 8, category: "respiratoria" },
+        { name: "Músculos intercostales", x: 50, y: 34, radius: 9, category: "respiratoria" },
+        { name: "Músculos abdominales", x: 50, y: 45, radius: 8, category: "respiratoria" },
+        
+        // Miembros superiores - inervación C5-T1
+        { name: "Deltoides (C5-C6)", x: 36, y: 28, radius: 5, category: "miembro_superior" },
+        { name: "Deltoides (C5-C6)", x: 64, y: 28, radius: 5, category: "miembro_superior" },
+        { name: "Bíceps braquial (C5-C6)", x: 30, y: 34, radius: 4, category: "miembro_superior" },
+        { name: "Bíceps braquial (C5-C6)", x: 70, y: 34, radius: 4, category: "miembro_superior" },
+        { name: "Tríceps (C6-C8)", x: 27, y: 36, radius: 4, category: "miembro_superior" },
+        { name: "Tríceps (C6-C8)", x: 73, y: 36, radius: 4, category: "miembro_superior" },
+        { name: "Flexores de muñeca (C6-C8)", x: 25, y: 45, radius: 3, category: "miembro_superior" },
+        { name: "Flexores de muñeca (C6-C8)", x: 75, y: 45, radius: 3, category: "miembro_superior" },
+        { name: "Extensores de muñeca (C6-C8)", x: 23, y: 43, radius: 3, category: "miembro_superior" },
+        { name: "Extensores de muñeca (C6-C8)", x: 77, y: 43, radius: 3, category: "miembro_superior" },
+        { name: "Intrínsecos de mano (C8-T1)", x: 20, y: 50, radius: 3, category: "miembro_superior" },
+        { name: "Intrínsecos de mano (C8-T1)", x: 80, y: 50, radius: 3, category: "miembro_superior" },
+        
+        // Miembros inferiores - inervación L2-S1
+        { name: "Iliopsoas (L1-L3)", x: 45, y: 55, radius: 5, category: "miembro_inferior" },
+        { name: "Iliopsoas (L1-L3)", x: 55, y: 55, radius: 5, category: "miembro_inferior" },
+        { name: "Cuádriceps (L2-L4)", x: 40, y: 65, radius: 6, category: "miembro_inferior" },
+        { name: "Cuádriceps (L2-L4)", x: 60, y: 65, radius: 6, category: "miembro_inferior" },
+        { name: "Isquiotibiales (L5-S1)", x: 42, y: 70, radius: 5, category: "miembro_inferior" },
+        { name: "Isquiotibiales (L5-S1)", x: 58, y: 70, radius: 5, category: "miembro_inferior" },
+        { name: "Tibial anterior (L4-L5)", x: 40, y: 85, radius: 4, category: "miembro_inferior" },
+        { name: "Tibial anterior (L4-L5)", x: 60, y: 85, radius: 4, category: "miembro_inferior" },
+        { name: "Peroneos (L5-S1)", x: 37, y: 85, radius: 3, category: "miembro_inferior" },
+        { name: "Peroneos (L5-S1)", x: 63, y: 85, radius: 3, category: "miembro_inferior" },
+        { name: "Gemelos (S1-S2)", x: 40, y: 88, radius: 4, category: "miembro_inferior" },
+        { name: "Gemelos (S1-S2)", x: 60, y: 88, radius: 4, category: "miembro_inferior" },
+        { name: "Intrínsecos del pie (S1-S2)", x: 40, y: 97, radius: 3, category: "miembro_inferior" },
+        { name: "Intrínsecos del pie (S1-S2)", x: 60, y: 97, radius: 3, category: "miembro_inferior" }
     ];
     
-    let selectedAreas = [];
+    // Inicializar el array de áreas seleccionadas
+    // Intenta cargar desde localStorage o inicializa como vacío si no hay datos
+    let selectedAreas = loadSelectedAreas() || [];
     let currentHoveredArea = null;
+    
+    // Inicializar la lista de áreas seleccionadas
+    updateSelectedAreasList();
+    
+    // Restaurar marcadores visuales para las áreas seleccionadas
+    restoreMarkers();
+    
+    // Función para guardar áreas seleccionadas en localStorage
+    function saveSelectedAreas() {
+        try {
+            localStorage.setItem('selectedAreas', JSON.stringify(selectedAreas));
+            console.log("Áreas guardadas en localStorage:", selectedAreas.length);
+        } catch (e) {
+            console.error("Error al guardar en localStorage:", e);
+        }
+    }
+    
+    // Función para cargar áreas seleccionadas desde localStorage
+    function loadSelectedAreas() {
+        try {
+            const saved = localStorage.getItem('selectedAreas');
+            return saved ? JSON.parse(saved) : null;
+        } catch (e) {
+            console.error("Error al cargar desde localStorage:", e);
+            return null;
+        }
+    }
+    
+    // Función para limpiar todas las áreas guardadas
+    function clearAllAreas() {
+        selectedAreas = [];
+        saveSelectedAreas();
+        
+        // Limpiar la interfaz
+        if (anatomyOverlay) {
+            anatomyOverlay.innerHTML = '';
+        }
+        updateSelectedAreasList();
+    }
+    
+    // Función para restaurar marcadores visuales
+    function restoreMarkers() {
+        if (!anatomyOverlay) return;
+        
+        // Limpiar overlay actual
+        anatomyOverlay.innerHTML = '';
+        
+        // Recrear marcadores para todas las áreas guardadas
+        selectedAreas.forEach(area => {
+            // Buscar el área original en la lista de anatomyAreas para recuperar datos como el radio
+            const areaData = {
+                name: area.name,
+                x: area.x, 
+                y: area.y,
+                radius: area.radius,
+                category: area.category
+            };
+            
+            createMarker(areaData, area.severity);
+        });
+    }
+    
+    // Añadir botón para reiniciar todas las áreas
+    const resetAreasBtn = document.createElement('button');
+    resetAreasBtn.className = 'btn-secondary';
+    resetAreasBtn.textContent = 'Reiniciar áreas';
+    resetAreasBtn.style.marginTop = '10px';
+    resetAreasBtn.addEventListener('click', clearAllAreas);
+    
+    // Añadir el botón al DOM, justo después de la lista de áreas seleccionadas
+    if (selectedAreasList && selectedAreasList.parentNode) {
+        selectedAreasList.parentNode.appendChild(resetAreasBtn);
+    }
     
     // Función para convertir coordenadas porcentuales a píxeles
     function getPixelCoordinates(area) {
@@ -677,48 +776,179 @@ function setupAnatomySection() {
         const coords = getPixelCoordinates(area);
         if (!coords) return;
         
+        // Verificar que tenemos un área válida con coordenadas
+        if (!area || !area.name || !area.x || !area.y) {
+            console.error("Área inválida para crear marcador:", area);
+            return;
+        }
+        
+        // Crear el marcador con las coordenadas del área actual
         const marker = document.createElement('div');
         marker.className = `anatomy-marker marker-${severity}`;
+        
+        // Asignar posición usando las coordenadas específicas del área
         marker.style.left = `${coords.x - coords.radius}px`;
         marker.style.top = `${coords.y - coords.radius}px`;
         marker.style.width = `${coords.radius * 2}px`;
         marker.style.height = `${coords.radius * 2}px`;
-        marker.setAttribute('data-area', area.name);
+        marker.style.pointerEvents = 'none'; // Evita que el marcador interfiera con los clicks
         
+        // Añadir atributos para identificar el área
+        marker.setAttribute('data-area', area.name);
+        marker.setAttribute('data-category', area.category);
+        
+        console.log(`Creando marcador para: ${area.name} en (${coords.x}, ${coords.y}) con radio ${coords.radius}`);
+        
+        // Añadir al overlay
         anatomyOverlay.appendChild(marker);
     }
     
     // Función para agregar un área a la lista de seleccionadas
     function addSelectedArea() {
-        if (!currentHoveredArea) return;
+        console.log("Función addSelectedArea ejecutada");
         
-        const severity = severityLevel.value;
-        const areaName = currentHoveredArea.name;
+        // Verificación adicional - comprobar si el área sigue siendo válida
+        const areaName = document.getElementById('area-name').textContent;
+        
+        // Si el contenido del área está vacío, podría indicar un problema con currentHoveredArea
+        if (!areaName || areaName.trim() === '') {
+            console.log("Nombre de área no encontrado en el formulario");
+            alert("No se ha seleccionado correctamente un área. Por favor, vuelva a hacer clic en el área anatómica deseada.");
+            return;
+        }
+        
+        // Si llegamos aquí, tenemos un nombre de área en el formulario
+        // Buscar el área original en la lista de anatomyAreas si currentHoveredArea no es válido
+        if (!currentHoveredArea) {
+            console.log("currentHoveredArea no es válido, intentando recuperar desde anatomyAreas");
+            for (const area of anatomyAreas) {
+                if (area.name === areaName) {
+                    currentHoveredArea = area;
+                    console.log("Área recuperada de la lista de áreas:", area);
+                    break;
+                }
+            }
+            
+            // Si aún no podemos recuperar el área, mostrar error
+            if (!currentHoveredArea) {
+                console.error("No se pudo recuperar el área desde la lista de áreas");
+                alert("Error al recuperar información del área. Por favor, vuelva a seleccionar un área de la anatomía.");
+                return;
+            }
+        }
+        
+        console.log("Añadiendo área seleccionada:", currentHoveredArea);
+        
+        const severity = document.getElementById('severity-level').value;
+        const evolution = document.getElementById('evolution-level').value;
+        const startDate = document.getElementById('symptom-start-date').value;
+        const functionalImpact = document.getElementById('functional-impact').value;
+        const intervention = document.getElementById('intervention').value;
+        
+        console.log("Datos recogidos:", {
+            severity,
+            evolution,
+            startDate,
+            functionalImpact,
+            intervention
+        });
         
         // Verificar si el área ya está seleccionada
         const existingIndex = selectedAreas.findIndex(area => area.name === areaName);
         
         if (existingIndex !== -1) {
-            // Actualizar la severidad si ya existe
-            selectedAreas[existingIndex].severity = severity;
+            // Actualizar la información si ya existe
+            selectedAreas[existingIndex] = {
+                ...selectedAreas[existingIndex],
+                severity: severity,
+                evolution: evolution,
+                startDate: startDate,
+                functionalImpact: functionalImpact,
+                intervention: intervention,
+                category: currentHoveredArea.category,
+                // Mantener coordenadas originales para el marcador
+                x: currentHoveredArea.x,
+                y: currentHoveredArea.y,
+                radius: currentHoveredArea.radius
+            };
+            
             // Eliminar el marcador anterior
             const oldMarker = anatomyOverlay.querySelector(`[data-area="${areaName}"]`);
             if (oldMarker) {
                 anatomyOverlay.removeChild(oldMarker);
             }
         } else {
-            // Añadir nueva área
+            // Añadir nueva área con todas las propiedades necesarias
             selectedAreas.push({
                 name: areaName,
-                severity: severity
+                severity: severity,
+                evolution: evolution,
+                startDate: startDate,
+                functionalImpact: functionalImpact,
+                intervention: intervention,
+                category: currentHoveredArea.category,
+                // Incluir coordenadas para el marcador
+                x: currentHoveredArea.x,
+                y: currentHoveredArea.y,
+                radius: currentHoveredArea.radius
             });
         }
         
-        // Crear marcador
+        // Guardar en localStorage
+        saveSelectedAreas();
+        
+        // Crear marcador usando el área actualmente seleccionada
         createMarker(currentHoveredArea, severity);
         
         // Actualizar la lista de áreas seleccionadas
         updateSelectedAreasList();
+        
+        // Limpiar todos los campos del formulario
+        document.getElementById('symptom-start-date').value = '';
+        document.getElementById('functional-impact').value = '';
+        document.getElementById('intervention').value = '';
+        
+        // Resetear los selectores a sus valores por defecto
+        const severitySelect = document.getElementById('severity-level');
+        const evolutionSelect = document.getElementById('evolution-level');
+        if (severitySelect) severitySelect.selectedIndex = 0;
+        if (evolutionSelect) evolutionSelect.selectedIndex = 0;
+        
+        // Limpiar los campos de texto de área y categoría
+        document.getElementById('area-name').textContent = '';
+        document.getElementById('area-category').textContent = '';
+        
+        // Ocultar el formulario de detalles del área
+        document.getElementById('area-details-form').style.display = 'none';
+        
+        // Importante: Reiniciar el área seleccionada actualmente para evitar errores
+        // al intentar seleccionar una nueva área
+        currentHoveredArea = null;
+        
+        // Limpiar cualquier resaltado temporal que pudiera quedar
+        removeHighlight();
+        
+        // Mostrar un mensaje breve confirmando que se ha añadido el área
+        const confirmationMessage = document.createElement('div');
+        confirmationMessage.className = 'confirmation-message';
+        confirmationMessage.textContent = `Área "${areaName}" añadida correctamente`;
+        confirmationMessage.style.position = 'fixed';
+        confirmationMessage.style.top = '50%';
+        confirmationMessage.style.left = '50%';
+        confirmationMessage.style.transform = 'translate(-50%, -50%)';
+        confirmationMessage.style.padding = '10px 20px';
+        confirmationMessage.style.background = 'rgba(46, 204, 113, 0.9)';
+        confirmationMessage.style.color = 'white';
+        confirmationMessage.style.borderRadius = '5px';
+        confirmationMessage.style.zIndex = '1000';
+        document.body.appendChild(confirmationMessage);
+        
+        // Eliminar el mensaje después de 2 segundos
+        setTimeout(() => {
+            if (confirmationMessage.parentNode) {
+                confirmationMessage.parentNode.removeChild(confirmationMessage);
+            }
+        }, 2000);
     }
     
     // Función para actualizar la lista visual de áreas seleccionadas
@@ -732,26 +962,66 @@ function setupAnatomySection() {
             return;
         }
         
+        // Agrupar por categorías para mejor organización
+        const groupedAreas = {
+            bulbar: { title: "Región Bulbar", items: [] },
+            cervical: { title: "Región Cervical", items: [] },
+            respiratoria: { title: "Musculatura Respiratoria", items: [] },
+            miembro_superior: { title: "Miembros Superiores", items: [] },
+            miembro_inferior: { title: "Miembros Inferiores", items: [] }
+        };
+        
+        // Clasificar áreas en grupos
         selectedAreas.forEach(area => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <strong>${area.name}</strong> - Afectación: <span class="severity-${area.severity}">${area.severity}</span>
-                <button class="remove-area-btn" data-area="${area.name}">×</button>
-            `;
-            selectedAreasList.appendChild(listItem);
-            
-            // Añadir evento para eliminar áreas
-            const removeBtn = listItem.querySelector('.remove-area-btn');
-            removeBtn.addEventListener('click', function() {
-                removeArea(area.name);
-            });
+            if (groupedAreas[area.category]) {
+                groupedAreas[area.category].items.push(area);
+            }
         });
+        
+        // Crear elementos de lista agrupados
+        for (const category in groupedAreas) {
+            if (groupedAreas[category].items.length > 0) {
+                const categoryHeader = document.createElement('li');
+                categoryHeader.className = 'category-header';
+                categoryHeader.textContent = groupedAreas[category].title;
+                selectedAreasList.appendChild(categoryHeader);
+                
+                groupedAreas[category].items.forEach(area => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'area-item';
+                    
+                    const dateInfo = area.startDate ? `<br>Inicio: ${area.startDate}` : '';
+                    const evolutionInfo = `<br>Evolución: <span class="evolution-${area.evolution}">${area.evolution}</span>`;
+                    const functionalInfo = area.functionalImpact ? `<br>Impacto funcional: ${area.functionalImpact}` : '';
+                    const interventionInfo = area.intervention ? `<br>Intervención: ${area.intervention}` : '';
+                    
+                    listItem.innerHTML = `
+                        <strong>${area.name}</strong> - Afectación: <span class="severity-${area.severity}">${area.severity}</span>
+                        ${dateInfo}
+                        ${evolutionInfo}
+                        ${functionalInfo}
+                        ${interventionInfo}
+                        <button class="remove-area-btn" data-area="${area.name}">×</button>
+                    `;
+                    selectedAreasList.appendChild(listItem);
+                    
+                    // Añadir evento para eliminar áreas
+                    const removeBtn = listItem.querySelector('.remove-area-btn');
+                    removeBtn.addEventListener('click', function() {
+                        removeArea(area.name);
+                    });
+                });
+            }
+        }
     }
     
     // Función para eliminar un área seleccionada
     function removeArea(areaName) {
         // Eliminar de la lista de áreas seleccionadas
         selectedAreas = selectedAreas.filter(area => area.name !== areaName);
+        
+        // Actualizar localStorage
+        saveSelectedAreas();
         
         // Eliminar el marcador visual
         const marker = anatomyOverlay.querySelector(`[data-area="${areaName}"]`);
@@ -765,7 +1035,13 @@ function setupAnatomySection() {
     
     // Evento para añadir un área cuando se hace clic en el botón
     if (addAreaBtn) {
-        addAreaBtn.addEventListener('click', addSelectedArea);
+        console.log("Botón encontrado, agregando evento click:", addAreaBtn);
+        addAreaBtn.addEventListener('click', function(e) {
+            console.log("Botón de añadir área clickeado");
+            addSelectedArea();
+        });
+    } else {
+        console.error("No se encontró el botón de añadir área");
     }
     
     // Inicializar la lista de áreas seleccionadas
@@ -780,29 +1056,218 @@ function setupAnatomySection() {
             
             // Encontrar si el cursor está sobre un área anatómica
             let foundArea = null;
+            let minDistance = Infinity;
+            
+            // Primero buscar todas las áreas dentro del radio y seleccionar la más cercana
             for (const area of anatomyAreas) {
                 const distance = Math.sqrt(Math.pow(x - area.x, 2) + Math.pow(y - area.y, 2));
+                
+                // Si el cursor está dentro del radio del área
                 if (distance <= area.radius) {
-                    foundArea = area;
-                    break;
+                    // Solo actualizar si esta área está más cerca que otras áreas encontradas
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        foundArea = area;
+                    }
                 }
             }
             
-            // Actualizar el área actual
-            currentHoveredArea = foundArea;
-            
-            // Cambiar el cursor si está sobre un área
-            anatomyImg.style.cursor = foundArea ? 'pointer' : 'default';
+            // Verificar si el área ha cambiado para evitar parpadeos y actualizaciones innecesarias
+            if (currentHoveredArea !== foundArea) {
+                // Si hay un área actualmente mostrada en el formulario, no la cambiemos automáticamente
+                const areaDetailsForm = document.getElementById('area-details-form');
+                const formVisible = areaDetailsForm && areaDetailsForm.style.display === 'block';
+                const areaNameElement = document.getElementById('area-name');
+                const currentAreaNameInForm = areaNameElement ? areaNameElement.textContent : '';
+                
+                // Solo actualizar el área actual si no hay un formulario visible O si es la misma área
+                if (!formVisible || (foundArea && foundArea.name === currentAreaNameInForm)) {
+                    // Actualizar el área actual
+                    currentHoveredArea = foundArea;
+                    
+                    // Cambiar el cursor si está sobre un área
+                    anatomyImg.style.cursor = foundArea ? 'pointer' : 'default';
+                    
+                    // Actualizar el tooltip si existe
+                    const tooltip = document.getElementById('anatomy-tooltip');
+                    if (tooltip) {
+                        if (foundArea) {
+                            tooltip.textContent = foundArea.name;
+                            // Posicionar el tooltip justo al lado del cursor
+                            tooltip.style.left = `${e.pageX + 15}px`;
+                            tooltip.style.top = `${e.pageY - 10}px`;
+                            tooltip.style.display = 'block';
+                            
+                            // Solo resaltar si no hay un formulario visible o es la misma área
+                            if (!formVisible || foundArea.name === currentAreaNameInForm) {
+                                // Resaltar la zona al pasar el cursor
+                                highlightArea(foundArea);
+                            }
+                        } else {
+                            tooltip.style.display = 'none';
+                            // Solo eliminar resaltado si no hay un formulario visible
+                            if (!formVisible) {
+                                removeHighlight();
+                            }
+                        }
+                    }
+                }
+            }
         });
+        
+        // Eliminar el resaltado y ocultar tooltip al salir de la imagen
+        anatomyImg.addEventListener('mouseleave', function() {
+            const tooltip = document.getElementById('anatomy-tooltip');
+            if (tooltip) {
+                tooltip.style.display = 'none';
+            }
+            removeHighlight();
+        });
+
+        // Función para resaltar temporalmente un área
+        function highlightArea(area) {
+            // Eliminar resaltado previo si existe
+            removeHighlight();
+            
+            // Crear elemento de resaltado
+            const highlight = document.createElement('div');
+            highlight.className = 'anatomy-highlight';
+            highlight.id = 'temp-highlight';
+            
+            // Posicionar el resaltado
+            const coords = getPixelCoordinates(area);
+            if (coords) {
+                highlight.style.left = `${coords.x - coords.radius}px`;
+                highlight.style.top = `${coords.y - coords.radius}px`;
+                highlight.style.width = `${coords.radius * 2}px`;
+                highlight.style.height = `${coords.radius * 2}px`;
+                
+                anatomyOverlay.appendChild(highlight);
+            }
+        }
+        
+        // Función para eliminar el resaltado temporal
+        function removeHighlight() {
+            const highlight = document.getElementById('temp-highlight');
+            if (highlight) {
+                highlight.remove();
+            }
+        }
         
         // Evento para seleccionar un área al hacer clic en la imagen
         anatomyImg.addEventListener('click', function() {
+            // Verificar si ya hay un formulario visible para un área
+            const areaDetailsForm = document.getElementById('area-details-form');
+            const formVisible = areaDetailsForm && areaDetailsForm.style.display === 'block';
+            const areaNameElement = document.getElementById('area-name');
+            const currentAreaNameInForm = areaNameElement ? areaNameElement.textContent : '';
+            
+            // Si hay un área siendo editada y el usuario hace clic en otra área, mostrar alerta
+            if (formVisible && currentHoveredArea && currentHoveredArea.name !== currentAreaNameInForm) {
+                console.log("Intento de seleccionar un área mientras se edita otra", {
+                    areaEnFormulario: currentAreaNameInForm,
+                    areaNueva: currentHoveredArea.name
+                });
+                
+                // Mostrar un mensaje al usuario
+                alert("Estás editando el área '" + currentAreaNameInForm + "'. Por favor, completa la edición actual o cierra el formulario antes de seleccionar otra área.");
+                
+                // Mantener el área original seleccionada
+                for (const area of anatomyAreas) {
+                    if (area.name === currentAreaNameInForm) {
+                        currentHoveredArea = area;
+                        break;
+                    }
+                }
+                
+                return;
+            }
+            
             if (currentHoveredArea) {
-                // Preseleccionar el área al hacer clic
-                addSelectedArea();
+                // Al hacer clic, seleccionar automáticamente el área en el formulario
+                document.getElementById('area-name').textContent = currentHoveredArea.name;
+                document.getElementById('area-category').textContent = getCategoryName(currentHoveredArea.category);
+                
+                // Limpiar los campos del formulario antes de mostrarlo
+                // Esto evita que se mantengan datos de selecciones anteriores
+                document.getElementById('symptom-start-date').value = '';
+                document.getElementById('functional-impact').value = '';
+                document.getElementById('intervention').value = '';
+                
+                // Resetear selectores a sus valores por defecto
+                const severitySelect = document.getElementById('severity-level');
+                const evolutionSelect = document.getElementById('evolution-level');
+                if (severitySelect) severitySelect.selectedIndex = 0;
+                if (evolutionSelect) evolutionSelect.selectedIndex = 0;
+                
+                // Mostrar el formulario de edición
+                areaDetailsForm.style.display = 'block';
+                
+                // Configurar el botón de añadir área dentro del formulario
+                const formAddButton = document.getElementById('add-area-btn');
+                if (formAddButton) {
+                    // Eliminar eventos previos para evitar duplicación
+                    formAddButton.replaceWith(formAddButton.cloneNode(true));
+                    const newButton = document.getElementById('add-area-btn');
+                    
+                    // Añadir el nuevo evento
+                    newButton.addEventListener('click', function() {
+                        console.log("Botón dentro del formulario clickeado");
+                        addSelectedArea();
+                    });
+                } else {
+                    console.error("No se encontró el botón dentro del formulario");
+                }
+                
+                // Configurar el botón de cancelar
+                const cancelButton = document.getElementById('cancel-area-btn');
+                if (cancelButton) {
+                    // Eliminar eventos previos para evitar duplicación
+                    cancelButton.replaceWith(cancelButton.cloneNode(true));
+                    const newCancelButton = document.getElementById('cancel-area-btn');
+                    
+                    // Añadir el nuevo evento
+                    newCancelButton.addEventListener('click', function() {
+                        console.log("Botón de cancelar clickeado");
+                        
+                        // Ocultar el formulario
+                        areaDetailsForm.style.display = 'none';
+                        
+                        // Limpiar el área seleccionada actual para permitir nueva selección
+                        currentHoveredArea = null;
+                        
+                        // Limpiar los campos
+                        document.getElementById('area-name').textContent = '';
+                        document.getElementById('area-category').textContent = '';
+                        document.getElementById('symptom-start-date').value = '';
+                        document.getElementById('functional-impact').value = '';
+                        document.getElementById('intervention').value = '';
+                        
+                        // Eliminar cualquier resaltado temporal
+                        removeHighlight();
+                    });
+                } else {
+                    console.error("No se encontró el botón de cancelar");
+                }
             }
         });
     }
+    
+    // Función helper para obtener el nombre legible de la categoría
+    function getCategoryName(category) {
+        const categoryNames = {
+            'bulbar': 'Región Bulbar',
+            'cervical': 'Región Cervical',
+            'respiratoria': 'Musculatura Respiratoria',
+            'miembro_superior': 'Miembros Superiores',
+            'miembro_inferior': 'Miembros Inferiores'
+        };
+        
+        return categoryNames[category] || category;
+    }
+    
+    // Configurar gráfico de progresión si existe el contenedor
+    setupProgressionChart();
 }
 
 // Función para configurar el sistema de pestañas
@@ -822,4 +1287,379 @@ function setupTabs() {
             document.getElementById(tabId).classList.add('active');
         });
     });
+}
+
+// Función para configurar el gráfico de progresión
+function setupProgressionChart() {
+    const progressionChart = document.getElementById('progression-chart');
+    if (!progressionChart) return;
+    
+    // Obtener datos de áreas seleccionadas con fechas (simulados para demostración)
+    const savedEvaluations = getSavedEvaluations();
+    
+    if (savedEvaluations.length === 0) {
+        progressionChart.innerHTML = '<div class="no-data">No hay datos de evaluaciones previas para mostrar.</div>';
+        return;
+    }
+    
+    // Ordenar evaluaciones por fecha
+    savedEvaluations.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    // Generar el gráfico
+    createProgressionChart(progressionChart, savedEvaluations);
+    
+    // Actualizar las opciones de fechas en la comparativa
+    updateComparisonDateOptions(savedEvaluations);
+    
+    // Configurar la funcionalidad de comparación
+    setupComparisonFeature(savedEvaluations);
+}
+
+// Función para obtener evaluaciones guardadas (simulada para demostración)
+function getSavedEvaluations() {
+    // En una implementación real, esto vendría de una base de datos o almacenamiento local
+    // Por ahora retornamos un array vacío para evitar datos simulados que causen problemas
+    return [];
+    
+    /* DATOS DE DEMOSTRACIÓN COMENTADOS PARA EVITAR INTERFERENCIAS
+    const currentDate = new Date();
+    
+    return [
+        {
+            date: new Date(currentDate.getFullYear(), currentDate.getMonth() - 6, 15).toISOString().split('T')[0],
+            areas: [
+                { name: "Lengua", severity: "leve", category: "bulbar", evolution: "estable" },
+                { name: "Músculos faciales", severity: "leve", category: "bulbar", evolution: "estable" },
+                { name: "Deltoides (C5-C6)", severity: "leve", category: "miembro_superior", evolution: "estable" }
+            ]
+        },
+        {
+            date: new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, 10).toISOString().split('T')[0],
+            areas: [
+                { name: "Lengua", severity: "moderada", category: "bulbar", evolution: "progresiva-lenta" },
+                { name: "Músculos faciales", severity: "moderada", category: "bulbar", evolution: "progresiva-lenta" },
+                { name: "Deltoides (C5-C6)", severity: "moderada", category: "miembro_superior", evolution: "progresiva-lenta" },
+                { name: "Diafragma", severity: "leve", category: "respiratoria", evolution: "estable" }
+            ]
+        },
+        {
+            date: new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 5).toISOString().split('T')[0],
+            areas: [
+                { name: "Lengua", severity: "grave", category: "bulbar", evolution: "progresiva-rapida" },
+                { name: "Músculos faciales", severity: "grave", category: "bulbar", evolution: "progresiva-rapida" },
+                { name: "Deltoides (C5-C6)", severity: "grave", category: "miembro_superior", evolution: "progresiva-rapida" },
+                { name: "Diafragma", severity: "moderada", category: "respiratoria", evolution: "progresiva-lenta" },
+                { name: "Bíceps braquial (C5-C6)", severity: "moderada", category: "miembro_superior", evolution: "progresiva-lenta" }
+            ]
+        }
+    ];
+    */
+}
+
+// Función para crear el gráfico de progresión
+function createProgressionChart(container, evaluations) {
+    // Preparar datos para el gráfico
+    const dates = evaluations.map(eval => {
+        const date = new Date(eval.date);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    });
+    
+    const categories = {
+        'bulbar': { name: 'Región Bulbar', values: [] },
+        'respiratoria': { name: 'Musculatura Respiratoria', values: [] },
+        'miembro_superior': { name: 'Miembros Superiores', values: [] },
+        'miembro_inferior': { name: 'Miembros Inferiores', values: [] },
+        'cervical': { name: 'Región Cervical', values: [] }
+    };
+    
+    // Calcular severidad promedio por categoría y fecha
+    evaluations.forEach((eval, index) => {
+        for (const category in categories) {
+            const areasInCategory = eval.areas.filter(area => area.category === category);
+            
+            if (areasInCategory.length === 0) {
+                categories[category].values[index] = 0;
+                continue;
+            }
+            
+            let severitySum = 0;
+            areasInCategory.forEach(area => {
+                switch(area.severity) {
+                    case 'leve': severitySum += 1; break;
+                    case 'moderada': severitySum += 2; break;
+                    case 'grave': severitySum += 3; break;
+                    default: severitySum += 0;
+                }
+            });
+            
+            categories[category].values[index] = severitySum / areasInCategory.length;
+        }
+    });
+    
+    // Crear gráfico (versión simple con HTML/CSS para demostración)
+    let chartHTML = `
+        <div class="chart-container">
+            <div class="chart-y-axis">
+                <div class="chart-y-label">Grave</div>
+                <div class="chart-y-label">Moderada</div>
+                <div class="chart-y-label">Leve</div>
+                <div class="chart-y-label">Sin afectación</div>
+            </div>
+            <div class="chart-grid">
+    `;
+    
+    // Crear líneas para cada categoría
+    for (const category in categories) {
+        if (categories[category].values.some(v => v > 0)) {
+            const categoryData = categories[category];
+            const lineColor = getCategoryColor(category);
+            
+            chartHTML += `<div class="chart-line" style="--chart-color: ${lineColor};">`;
+            
+            // Crear puntos en la línea
+            categoryData.values.forEach((value, i) => {
+                if (value > 0) {
+                    const xPos = (i / (dates.length - 1)) * 100;
+                    const yPos = (1 - (value / 3)) * 100;
+                    
+                    chartHTML += `
+                        <div class="chart-point" style="left: ${xPos}%; bottom: ${yPos}%;" title="${categoryData.name}: ${getSeverityLabel(value)} (${dates[i]})"></div>
+                    `;
+                }
+            });
+            
+            chartHTML += `</div>`;
+        }
+    }
+    
+    // Añadir etiquetas de fechas en el eje X
+    chartHTML += `
+            </div>
+            <div class="chart-x-axis">
+    `;
+    
+    dates.forEach(date => {
+        chartHTML += `<div class="chart-x-label">${date}</div>`;
+    });
+    
+    chartHTML += `
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = chartHTML;
+}
+
+// Función para obtener color por categoría
+function getCategoryColor(category) {
+    const colors = {
+        'bulbar': '#e74c3c',
+        'respiratoria': '#3498db',
+        'miembro_superior': '#2ecc71',
+        'miembro_inferior': '#f39c12',
+        'cervical': '#9b59b6'
+    };
+    
+    return colors[category] || '#666';
+}
+
+// Función para obtener etiqueta de severidad según valor numérico
+function getSeverityLabel(value) {
+    if (value >= 2.5) return 'Grave';
+    if (value >= 1.5) return 'Moderada';
+    if (value >= 0.5) return 'Leve';
+    return 'Sin afectación';
+}
+
+// Función para actualizar opciones de fechas en la comparativa
+function updateComparisonDateOptions(evaluations) {
+    const date1Select = document.getElementById('comparison-date1');
+    const date2Select = document.getElementById('comparison-date2');
+    
+    if (!date1Select || !date2Select) return;
+    
+    // Limpiar opciones existentes
+    date1Select.innerHTML = '<option value="">Seleccionar fecha...</option>';
+    date2Select.innerHTML = '<option value="">Seleccionar fecha...</option>';
+    
+    // Añadir opciones de fechas
+    evaluations.forEach((eval, index) => {
+        const date = new Date(eval.date);
+        const dateStr = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+        
+        const option1 = document.createElement('option');
+        option1.value = index;
+        option1.textContent = dateStr;
+        date1Select.appendChild(option1);
+        
+        const option2 = document.createElement('option');
+        option2.value = index;
+        option2.textContent = dateStr;
+        date2Select.appendChild(option2);
+    });
+}
+
+// Función para configurar la funcionalidad de comparación
+function setupComparisonFeature(evaluations) {
+    const compareBtn = document.getElementById('compare-btn');
+    const date1Select = document.getElementById('comparison-date1');
+    const date2Select = document.getElementById('comparison-date2');
+    const resultsDiv = document.getElementById('comparison-results');
+    
+    if (!compareBtn || !date1Select || !date2Select || !resultsDiv) return;
+    
+    compareBtn.addEventListener('click', function() {
+        const index1 = parseInt(date1Select.value);
+        const index2 = parseInt(date2Select.value);
+        
+        if (isNaN(index1) || isNaN(index2) || index1 === index2) {
+            resultsDiv.innerHTML = '<p class="error-message">Por favor, seleccione dos fechas diferentes para comparar.</p>';
+            return;
+        }
+        
+        const eval1 = evaluations[index1];
+        const eval2 = evaluations[index2];
+        
+        // Determinar cuál es la evaluación anterior y cuál la más reciente
+        const [oldEval, newEval] = eval1.date < eval2.date ? [eval1, eval2] : [eval2, eval1];
+        
+        // Generar la comparativa
+        const comparisonHTML = generateComparisonHTML(oldEval, newEval);
+        resultsDiv.innerHTML = comparisonHTML;
+    });
+}
+
+// Función para generar el HTML de la comparativa
+function generateComparisonHTML(oldEval, newEval) {
+    const oldDate = new Date(oldEval.date);
+    const newDate = new Date(newEval.date);
+    
+    const oldDateStr = `${oldDate.getDate()}/${oldDate.getMonth() + 1}/${oldDate.getFullYear()}`;
+    const newDateStr = `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()}`;
+    
+    let html = `
+        <div class="comparison-header">
+            <h5>Comparativa entre ${oldDateStr} y ${newDateStr}</h5>
+        </div>
+        <div class="comparison-content">
+    `;
+    
+    // Lista de todas las áreas que aparecen en ambas evaluaciones
+    const allAreas = new Set();
+    oldEval.areas.forEach(area => allAreas.add(area.name));
+    newEval.areas.forEach(area => allAreas.add(area.name));
+    
+    // Agrupar por categorías
+    const categorizedAreas = {};
+    
+    allAreas.forEach(areaName => {
+        const oldArea = oldEval.areas.find(a => a.name === areaName);
+        const newArea = newEval.areas.find(a => a.name === areaName);
+        
+        if (!oldArea && !newArea) return;
+        
+        const category = (oldArea ? oldArea.category : newArea.category) || 'otra';
+        
+        if (!categorizedAreas[category]) {
+            categorizedAreas[category] = [];
+        }
+        
+        categorizedAreas[category].push({
+            name: areaName,
+            old: oldArea,
+            new: newArea
+        });
+    });
+    
+    // Generar comparación por categorías
+    for (const category in categorizedAreas) {
+        html += `<div class="comparison-category">
+            <h6>${getCategoryName(category)}</h6>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Área</th>
+                        <th>${oldDateStr}</th>
+                        <th>${newDateStr}</th>
+                        <th>Cambio</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        categorizedAreas[category].forEach(item => {
+            const oldSeverity = item.old ? item.old.severity : 'ninguna';
+            const newSeverity = item.new ? item.new.severity : 'ninguna';
+            
+            const change = getChangeIndicator(oldSeverity, newSeverity);
+            
+            html += `
+                <tr>
+                    <td>${item.name}</td>
+                    <td><span class="severity-${oldSeverity}">${getSeverityDisplayName(oldSeverity)}</span></td>
+                    <td><span class="severity-${newSeverity}">${getSeverityDisplayName(newSeverity)}</span></td>
+                    <td>${change}</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                </tbody>
+            </table>
+        </div>`;
+    }
+    
+    html += `
+        </div>
+    `;
+    
+    return html;
+}
+
+// Función para obtener el nombre de visualización de la severidad
+function getSeverityDisplayName(severity) {
+    switch(severity) {
+        case 'leve': return 'Leve';
+        case 'moderada': return 'Moderada';
+        case 'grave': return 'Grave';
+        case 'ninguna': return 'Sin afectación';
+        default: return severity;
+    }
+}
+
+// Función para obtener el indicador de cambio
+function getChangeIndicator(oldSeverity, newSeverity) {
+    const severityValues = {
+        'ninguna': 0,
+        'leve': 1,
+        'moderada': 2,
+        'grave': 3
+    };
+    
+    const oldVal = severityValues[oldSeverity] || 0;
+    const newVal = severityValues[newSeverity] || 0;
+    
+    if (oldVal === newVal) {
+        return '<span class="change-none">Sin cambios</span>';
+    } else if (newVal > oldVal) {
+        const diff = newVal - oldVal;
+        return `<span class="change-worse">Empeoramiento ${'+'.repeat(diff)}</span>`;
+    } else {
+        const diff = oldVal - newVal;
+        return `<span class="change-better">Mejora ${'+'}</span>`;
+    }
+}
+
+// Función para obtener el nombre legible de la categoría
+function getCategoryName(category) {
+    const categoryNames = {
+        'bulbar': 'Región Bulbar',
+        'cervical': 'Región Cervical',
+        'respiratoria': 'Musculatura Respiratoria',
+        'miembro_superior': 'Miembros Superiores',
+        'miembro_inferior': 'Miembros Inferiores',
+        'otra': 'Otras áreas'
+    };
+    
+    return categoryNames[category] || category;
 } 
