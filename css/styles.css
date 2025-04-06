@@ -345,4 +345,946 @@ input[type="radio"]:checked + span {
     margin: 10px 0;
     page-break-inside: avoid;
   }
+}
+
+/* Estilos para la sección de Anatomía de Enfermedad */
+.anatomy-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.anatomy-image-container {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.anatomy-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.anatomy-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.anatomy-circle {
+  position: absolute;
+  background-color: rgba(100, 100, 100, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+.anatomy-circle:hover {
+  transform: scale(1.1);
+  background-color: rgba(100, 100, 100, 0.5);
+}
+
+.anatomy-tooltip {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 3px;
+  z-index: 100;
+  font-size: 12px;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  max-width: 200px;
+  text-align: center;
+}
+
+.area-details-form {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-top: 20px;
+  display: none;
+}
+
+.area-details-form h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.area-category {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
+.anatomy-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.selected-areas {
+  flex: 1;
+  width: 100%;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.selected-areas h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.severity-selection {
+  flex: 1;
+  min-width: 300px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.severity-selection h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.anatomy-marker {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.5);
+  border: 2px solid rgba(255, 0, 0, 0.8);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.anatomy-marker:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+#temp-marker {
+  background-color: rgba(0, 150, 255, 0.5);
+  border-color: rgba(0, 150, 255, 0.8);
+  animation: pulsate 1.5s infinite ease-in-out;
+  box-shadow: 0 0 5px rgba(0, 150, 255, 0.8);
+  z-index: 11;
+}
+
+#cursor-indicator {
+  pointer-events: none;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(100, 200, 255, 0.3);
+  border: 2px dashed rgba(100, 200, 255, 0.8);
+  border-radius: 50%;
+  position: absolute;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes pulsate {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+}
+
+.area-coords {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin-left: 5px;
+}
+
+.no-areas {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.marker-leve {
+  background-color: rgba(255, 255, 0, 0.5);
+  border-color: rgba(255, 255, 0, 0.8);
+}
+
+.marker-moderada {
+  background-color: rgba(255, 165, 0, 0.5);
+  border-color: rgba(255, 165, 0, 0.8);
+}
+
+.marker-grave {
+  background-color: rgba(255, 0, 0, 0.5);
+  border-color: rgba(255, 0, 0, 0.8);
+}
+
+.severity-leve {
+  color: #CCB800;
+  font-weight: bold;
+}
+
+.severity-moderada {
+  color: #CC7000;
+  font-weight: bold;
+}
+
+.severity-grave {
+  color: #CC0000;
+  font-weight: bold;
+}
+
+.evolution-estable {
+  color: #008800;
+  font-weight: bold;
+}
+
+.evolution-progresiva-lenta {
+  color: #CC7000;
+  font-weight: bold;
+}
+
+.evolution-progresiva-rapida {
+  color: #CC0000;
+  font-weight: bold;
+}
+
+.remove-area-btn {
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  color: #dc3545;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
+  height: 20px;
+  line-height: 16px;
+  margin-left: 8px;
+  padding: 0;
+  text-align: center;
+  width: 20px;
+}
+
+.remove-area-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+#selected-areas-list {
+  margin: 0;
+  padding-left: 5px;
+  list-style-type: none;
+}
+
+#selected-areas-list .category-header {
+  font-weight: bold;
+  color: #333;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+#selected-areas-list .area-item {
+  padding: 8px;
+  background-color: white;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  line-height: 1.4;
+}
+
+#add-area-btn {
+  margin-top: 15px;
+  width: 100%;
+}
+
+/* Estilos para la visualización longitudinal */
+.progression-chart-container {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.progression-chart-container h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+#progression-chart {
+  width: 100%;
+  height: 300px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid;
+}
+
+.dot-leve {
+  background-color: #CCB800;
+  border-color: #998A00;
+}
+
+.dot-moderada {
+  background-color: #CC7000;
+  border-color: #995500;
+}
+
+.dot-grave {
+  background-color: #CC0000;
+  border-color: #990000;
+}
+
+.chart-point {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #777;
+  border: 2px solid #666;
+  transform: translate(-50%, 50%);
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+}
+
+/* Colores específicos para cada nivel de severidad */
+.chart-point.dot-leve {
+  background-color: #CCB800;
+  border-color: #998A00;
+}
+
+.chart-point.dot-moderada {
+  background-color: #CC7000;
+  border-color: #995500;
+}
+
+.chart-point.dot-grave {
+  background-color: #CC0000;
+  border-color: #990000;
+}
+
+.chart-point:hover {
+  width: 16px;
+  height: 16px;
+  z-index: 10;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.chart-point:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Estilos para la tabla de comparación */
+.comparison-header h5 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.comparison-category {
+  margin-bottom: 20px;
+}
+
+.comparison-category h6 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.comparison-table th {
+  background-color: #f2f2f2;
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.comparison-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.change-none {
+  color: #777;
+}
+
+.change-worse {
+  color: #d9534f;
+  font-weight: bold;
+}
+
+.change-better {
+  color: #5cb85c;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #d9534f;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Media queries adicionales */
+@media (max-width: 480px) {
+  .chart-x-label {
+    font-size: 8px;
+    transform: rotate(-45deg);
+    transform-origin: center left;
+  }
+  
+  .comparison-table {
+    font-size: 12px;
+  }
+  
+  .comparison-table th,
+  .comparison-table td {
+    padding: 5px;
+  }
+}
+
+.anatomy-highlight {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(0, 150, 255, 0.3);
+  border: 2px dashed rgba(0, 150, 255, 0.8);
+  pointer-events: none;
+  animation: pulse 1.5s infinite ease-in-out;
+  z-index: 1;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+/* Botón de cancelar */
+.btn-outline {
+  background-color: transparent;
+  color: #6c757d;
+  border: 1px solid #6c757d;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  background-color: #f1f1f1;
+  color: #5a6268;
+}
+
+/* Estilos para el sistema de pestañas/solapas */
+.tabs-container {
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  margin-right: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--light-text);
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: #e9ecef;
+}
+
+.tab-btn.active {
+  background-color: white;
+  color: var(--primary-color);
+  border-bottom: 2px solid white;
+  margin-bottom: -1px;
+  font-weight: bold;
+}
+
+.tab-content {
+  background-color: white;
+  border-radius: 0 0 5px 5px;
+}
+
+.tab-pane {
+  display: none;
+  padding: 15px 0;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+@media (max-width: 576px) {
+  .tabs {
+    flex-direction: column;
+    border-bottom: none;
+  }
+  
+  .tab-btn {
+    border-radius: 5px;
+    margin-bottom: 5px;
+    border: 1px solid var(--border-color);
+  }
+  
+  .tab-btn.active {
+    margin-bottom: 5px;
+  }
+}
+
+/* Estilos para el gráfico de progresión */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  margin-top: 20px;
+}
+
+.chart-grid {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  right: 0;
+  bottom: 25px;
+  background-color: white;
+  border: 1px solid #ddd;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 25% 33.33%, 33.33% 25%;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.chart-y-axis {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-weight: 500;
+  color: #555;
+}
+
+.chart-y-label {
+  font-size: 11px;
+  text-align: right;
+  padding-right: 5px;
+  color: #555;
+  height: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.chart-x-axis {
+  position: absolute;
+  left: 40px;
+  right: 0;
+  bottom: 0;
+  height: 25px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.chart-x-label {
+  font-size: 11px;
+  text-align: center;
+  padding-top: 5px;
+  color: #555;
+  flex: 1;
+}
+
+.chart-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  --chart-color: #3498db;
+}
+
+/* Estilos para la comparativa de evaluaciones */
+.evaluation-comparison {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.evaluation-comparison h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.comparison-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.comparison-results {
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  min-height: 100px;
+}
+
+#compare-btn {
+  margin-top: 10px;
+}
+
+/* Estilos para el selector múltiple */
+select[multiple] {
+  height: auto;
+  min-height: 120px;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+select[multiple] option {
+  padding: 5px;
+  margin-bottom: 3px;
+  border-radius: 3px;
+}
+
+select[multiple] option:hover {
+  background-color: #f0f0f0;
+}
+
+select[multiple] option:checked {
+  background-color: #e9f5ff;
+  color: #2c7be5;
+  font-weight: 500;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* Estilos para áreas predefinidas vs personalizadas */
+.predefined-marker {
+  background-color: rgba(100, 200, 100, 0.7) !important;
+  border: 3px solid rgba(50, 180, 50, 1) !important;
+  box-shadow: 0 0 10px rgba(0, 150, 0, 0.8), inset 0 0 5px rgba(255, 255, 255, 0.5);
+  z-index: 25;
+  width: 20px !important;
+  height: 20px !important;
+  animation: pulsateGreen 2s infinite;
+}
+
+@keyframes pulsateGreen {
+  0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(0, 150, 0, 0.5); }
+  70% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 0 10px rgba(0, 150, 0, 0); }
+  100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(0, 150, 0, 0); }
+}
+
+.predefined-marker:hover {
+  background-color: rgba(100, 200, 100, 0.9) !important;
+  transform: translate(-50%, -50%) scale(1.3) !important;
+  z-index: 35;
+  box-shadow: 0 0 15px rgba(0, 150, 0, 1), inset 0 0 8px rgba(255, 255, 255, 0.7);
+}
+
+.selected-predefined {
+  border-width: 3px !important;
+  z-index: 15;
+}
+
+.selected-custom {
+  border-width: 2px;
+  z-index: 10;
+}
+
+.predefined-area-item {
+  background-color: rgba(240, 255, 240, 0.8) !important;
+  border-left: 4px solid #4CAF50;
+}
+
+.predefined-indicator {
+  background-color: #4CAF50;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+.custom-indicator {
+  background-color: #3498db;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+.area-type {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.area-description {
+  font-style: italic;
+  color: #666;
+  margin-top: 5px;
+  font-size: 0.9em;
+}
+
+/* Campo de entrada para nombre personalizado */
+#custom-name-container {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #eaeaea;
+}
+
+#custom-name-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+#custom-area-name {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Mejorar visualización de las áreas seleccionadas */
+.area-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.area-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.area-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.area-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.area-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.btn-edit, .btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.btn-edit {
+  color: #3498db;
+}
+
+.btn-edit:hover {
+  background-color: #eaf5ff;
+}
+
+.btn-delete {
+  color: #e74c3c;
+}
+
+.btn-delete:hover {
+  background-color: #fdedeb;
+}
+
+/* Estilos para el gráfico de progresión temporal */
+.chart-container {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+    min-height: 300px;
+}
+
+.chart-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+    pointer-events: none;
+    max-width: 200px;
+}
+
+.chart-point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+}
+
+.chart-point:hover {
+    transform: scale(1.5) translate(-50%, 50%);
+    z-index: 100;
+}
+
+.dot-leve {
+    background-color: #CCB800 !important;
+}
+
+.dot-moderada, .dot-moderado {
+    background-color: #CC7000 !important;
+}
+
+.dot-grave, .dot-severo, .dot-severa {
+    background-color: #CC0000 !important;
+}
+
+.empty-chart-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    background-color: #f9f9f9;
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.empty-chart-message::before {
+    content: "📊";
+    font-size: 32px;
+    margin-bottom: 10px;
 } 

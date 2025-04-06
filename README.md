@@ -60,15 +60,24 @@ No requiere instalación. El sistema funciona en cualquier navegador web moderno
 5. Si es necesario, imprima los resultados con el botón "Guardar en PDF"
 6. Para iniciar una nueva evaluación, haga clic en "Restablecer Formulario"
 
-## Estructura de Archivos
+## Estructura del Proyecto
+
 ```
-├── index.html         # Página principal
-├── css/              
-│   └── styles.css     # Estilos de la aplicación
-├── js/               
-│   └── script.js      # Funcionalidad JavaScript
-├── img/               # Carpeta para imágenes (si se requieren)
-└── README.md          # Este archivo
+EMPA-CELA/
+├── index.html       # Página principal de la aplicación
+├── css/
+│   └── styles.css   # Estilos CSS
+├── js/
+│   ├── modules/     # Módulos JavaScript
+│   │   ├── core.js          # Funcionalidad principal y estado global
+│   │   ├── tabs.js          # Sistema de pestañas
+│   │   ├── anatomy.js       # Funcionalidad de sección de anatomía
+│   │   ├── progression.js   # Visualización de progresión
+│   │   ├── calculation.js   # Cálculos de puntuaciones
+│   │   └── pdf.js           # Generación de informes PDF
+│   └── main.js      # Inicialización de la aplicación
+└── img/
+    └── anatomy.png  # Imagen para la sección de anatomía
 ```
 
 ## Tecnologías Utilizadas

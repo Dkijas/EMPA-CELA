@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escala EMPA-CELA Interactiva</title>
   <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Cargar módulos -->
+  <script src="js/modules/core.js"></script>
+  <script src="js/modules/tabs.js"></script>
+  <script src="js/modules/anatomy.js"></script>
+  <script src="js/modules/progression.js"></script>
+  <script src="js/modules/calculation.js"></script>
+  <script src="js/modules/pdf.js"></script>
+  <script src="js/main.js"></script>
 </head>
 <body>
   <div class="container">
@@ -12,298 +21,406 @@
       <h1>Escala Multidimensional de Prioridad de Atención en Centros para Pacientes con ELA (EMPA-CELA)</h1>
     </header>
     
-    <div class="info-panel">
-      <strong>Instrucciones:</strong> Evalúe cada dimensión seleccionando la opción que mejor describe la situación actual del paciente. Al finalizar, haga clic en "Calcular Prioridad".
-    </div>
-    
     <div class="disclaimer">
       <strong>AVISO IMPORTANTE:</strong> Esta escala no ha sido validada clínicamente. No se asume responsabilidad de ningún tipo por su uso. Los resultados son meramente orientativos y no deben utilizarse como única herramienta para tomar decisiones clínicas. Consulte siempre con profesionales sanitarios cualificados.
     </div>
     
-    <div class="progress-container">
-      <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+    <!-- Sistema de pestañas/solapas -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="escala-tab">Escala EMPA-CELA</button>
+        <button class="tab-btn" data-tab="anatomia-tab">Anatomía de Enfermedad</button>
+      </div>
     </div>
     
-    <form id="empa-cela-form">
-      <!-- Datos del paciente -->
-      <fieldset>
-        <legend>Datos del paciente</legend>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <!-- Contenido de las pestañas -->
+    <div class="tab-content">
+      <!-- Pestaña de Escala EMPA-CELA -->
+      <div id="escala-tab" class="tab-pane active">
+        <div class="info-panel">
+          <strong>Instrucciones:</strong> Evalúe cada dimensión seleccionando la opción que mejor describe la situación actual del paciente. Al finalizar, haga clic en "Calcular Prioridad".
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+        </div>
+        
+        <form id="empa-cela-form">
+          <!-- Datos del paciente -->
+          <fieldset>
+            <legend>Datos del paciente</legend>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div>
+                <label for="nombre_paciente">Nombre completo:</label>
+                <input type="text" id="nombre_paciente" class="form-input">
+              </div>
+              <div>
+                <label for="id_paciente">Identificación/NHC:</label>
+                <input type="text" id="id_paciente" class="form-input">
+              </div>
+              <div>
+                <label for="fecha_nacimiento">Fecha de nacimiento:</label>
+                <input type="date" id="fecha_nacimiento" class="form-input">
+              </div>
+              <div>
+                <label for="fecha_evaluacion">Fecha de evaluación:</label>
+                <input type="date" id="fecha_evaluacion" class="form-input">
+              </div>
+            </div>
+            <div>
+              <label for="profesional">Profesional evaluador:</label>
+              <input type="text" id="profesional" class="form-input">
+            </div>
+            <div>
+              <label for="centro">Centro sanitario:</label>
+              <input type="text" id="centro" class="form-input">
+            </div>
+          </fieldset>
+          
+          <!-- Sección 1: Función motora (0-7 puntos) -->
+          <fieldset>
+            <legend>1. Función motora (0-7 puntos)</legend>
+            
+            <!-- A. Movilidad funcional (0-4 puntos) -->
+            <fieldset class="subsection">
+              <legend>A. Movilidad funcional (0-4 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="movilidad_funcional" value="0" checked> 0: Independiente para caminar, cambiar de posición y realizar transferencias.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="movilidad_funcional" value="1"> 1: Necesita ayuda mínima para desplazamientos o transferencias.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="movilidad_funcional" value="2"> 2: Dependencia parcial en desplazamientos o transferencias; requiere apoyo constante.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="movilidad_funcional" value="3"> 3: Totalmente dependiente para movilidad y transferencias; necesita asistencia completa.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="movilidad_funcional" value="4"> 4: Incapacidad total para moverse o realizar transferencias sin intervención especializada.</label>
+              </div>
+            </fieldset>
+            
+            <!-- B. Movilidad fina (0-2 puntos) -->
+            <fieldset class="subsection">
+              <legend>B. Movilidad fina (0-2 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="movilidad_fina" value="0" checked> 0: Función normal en las manos; puede realizar actividades finas como escribir o vestirse.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="movilidad_fina" value="1"> 1: Dificultades moderadas para realizar actividades finas; necesita asistencia parcial.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="movilidad_fina" value="2"> 2: Función gravemente afectada; incapacidad para realizar movimientos finos incluso con asistencia.</label>
+              </div>
+            </fieldset>
+            
+            <!-- C. Resistencia y fatiga (0-1 punto) -->
+            <fieldset class="subsection">
+              <legend>C. Resistencia y fatiga (0-1 punto)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="resistencia_fatiga" value="0" checked> 0: Puede realizar actividades motoras sin fatiga significativa.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="resistencia_fatiga" value="1"> 1: Presenta fatiga severa que limita la realización de actividades incluso con movilidad parcial.</label>
+              </div>
+            </fieldset>
+          </fieldset>
+          
+          <!-- Sección 2: Función bulbar (0-6 puntos) -->
+          <fieldset>
+            <legend>2. Función bulbar (0-6 puntos)</legend>
+            
+            <!-- A. Capacidad de habla y comunicación (0-4 puntos) -->
+            <fieldset class="subsection">
+              <legend>A. Capacidad de habla y comunicación (0-4 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="habla_comunicacion" value="0" checked> 0: Habla normal, sin limitaciones.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="habla_comunicacion" value="1"> 1: Alteraciones leves (habla más lenta o dificultad ocasional para articular palabras).</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="habla_comunicacion" value="2"> 2: Habla severamente afectada, pero funcional (se necesita esfuerzo significativo para comunicarse).</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="habla_comunicacion" value="3"> 3: Pérdida total del habla; depende completamente de dispositivos o cuidadores para comunicarse.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="habla_comunicacion" value="4"> 4: Pérdida total del habla y comunicación limitada, incluso con dispositivos.</label>
+              </div>
+            </fieldset>
+            
+            <!-- B. Uso de dispositivos de comunicación (0-2 puntos) -->
+            <fieldset class="subsection">
+              <legend>B. Uso de dispositivos de comunicación (0-2 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="dispositivo_comunicacion" value="0" checked> 0: Dispositivo disponible y utilizado de manera efectiva.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="dispositivo_comunicacion" value="1"> 1: Dispositivo disponible, pero uso limitado o ineficaz.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="dispositivo_comunicacion" value="2"> 2: Dispositivo no disponible o no utilizado, causando aislamiento significativo.</label>
+              </div>
+            </fieldset>
+          </fieldset>
+          
+          <!-- Sección 3: Función cognitiva y conductual (0-6 puntos) -->
+          <fieldset>
+            <legend>3. Función cognitiva y conductual (0-6 puntos)</legend>
+            
+            <!-- A. Atención y concentración (0-2 puntos) -->
+            <fieldset class="subsection">
+              <legend>A. Atención y concentración (0-2 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="atencion_concentracion" value="0" checked> 0: Atención y concentración normales, sin dificultad para tareas cotidianas.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="atencion_concentracion" value="1"> 1: Dificultades leves, como distracción ocasional.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="atencion_concentracion" value="2"> 2: Dificultades significativas o incapacidad constante para concentrarse en tareas simples.</label>
+              </div>
+            </fieldset>
+            
+            <!-- B. Memoria (0-2 puntos) -->
+            <fieldset class="subsection">
+              <legend>B. Memoria (0-2 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="memoria" value="0" checked> 0: Recuerdo intacto de eventos recientes y capacidad para retener información.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="memoria" value="1"> 1: Pérdida leve de memoria que no afecta significativamente las tareas diarias.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="memoria" value="2"> 2: Pérdida moderada o severa que interfiere con las actividades cotidianas.</label>
+              </div>
+            </fieldset>
+            
+            <!-- C. Lenguaje y fluidez verbal (0-2 puntos) -->
+            <fieldset class="subsection">
+              <legend>C. Lenguaje y fluidez verbal (0-2 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="lenguaje_fluidez" value="0" checked> 0: Lenguaje funcional, puede comunicarse de manera efectiva.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="lenguaje_fluidez" value="1"> 1: Dificultad leve para encontrar palabras o estructurar frases.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="lenguaje_fluidez" value="2"> 2: Dificultades severas en la comunicación, incluso con apoyo.</label>
+              </div>
+            </fieldset>
+          </fieldset>
+          
+          <!-- Sección 4: Apoyo y situación social (0-6 puntos) -->
+          <fieldset>
+            <legend>4. Apoyo y situación social (0-6 puntos)</legend>
+            
+            <!-- A. Apoyo familiar y sobrecarga del cuidador (0-2 puntos) -->
+            <fieldset class="subsection">
+              <legend>A. Apoyo familiar y sobrecarga del cuidador (0-2 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="apoyo_familiar" value="0" checked> 0: Sin signos de sobrecarga ni antecedentes de enfermedad mental significativa.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="apoyo_familiar" value="1"> 1: Estrés moderado o leve impacto emocional, incluso en cuidadores con antecedentes de enfermedad mental bien controlada.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="apoyo_familiar" value="2"> 2: Sobrecarga severa o coexistencia de enfermedades mentales activas que afectan su capacidad para cuidar adecuadamente.</label>
+              </div>
+            </fieldset>
+            
+            <!-- B. Situación económica (0-2 puntos) -->
+            <fieldset class="subsection">
+              <legend>B. Situación económica (0-2 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="situacion_economica" value="0" checked> 0: Sin impacto económico significativo.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="situacion_economica" value="1"> 1: Impacto leve (gastos adicionales o reducciones laborales ocasionales).</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="situacion_economica" value="2"> 2: Impacto severo (reducciones laborales importantes o gastos significativos).</label>
+              </div>
+            </fieldset>
+            
+            <!-- C. Acceso y tramitación de ayudas estatales (0-2 puntos) -->
+            <fieldset class="subsection">
+              <legend>C. Acceso y tramitación de ayudas estatales (0-2 puntos)</legend>
+              <div class="option-container">
+                <label><input type="radio" name="ayudas_estatales" value="0" checked> 0: Todas las ayudas tramitadas, activas y suficientes.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="ayudas_estatales" value="1"> 1: Ayudas activas, pero insuficientes para cubrir los gastos.</label>
+              </div>
+              <div class="option-container">
+                <label><input type="radio" name="ayudas_estatales" value="2"> 2: Ayudas no tramitadas o inexistentes.</label>
+              </div>
+            </fieldset>
+          </fieldset>
+          
+          <!-- Sección 5: Comorbilidades y estado general de salud (0-5 puntos) -->
+          <fieldset>
+            <legend>5. Comorbilidades y estado general de salud (0-5 puntos)</legend>
+            <div class="option-container">
+              <label><input type="radio" name="comorbilidades" value="0" checked> 0: Sin comorbilidades significativas.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="comorbilidades" value="1"> 1: Comorbilidades leves que no afectan su funcionalidad.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="comorbilidades" value="2"> 2: Comorbilidades moderadas con impacto parcial.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="comorbilidades" value="3"> 3: Comorbilidades severas que complican su manejo.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="comorbilidades" value="4"> 4: Múltiples comorbilidades graves.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="comorbilidades" value="5"> 5: Estado crítico por comorbilidades adicionales.</label>
+            </div>
+          </fieldset>
+          
+          <!-- Sección 6: Supervisión de enfermería y cuidados (0-3 puntos) -->
+          <fieldset>
+            <legend>6. Supervisión de enfermería y cuidados (0-3 puntos)</legend>
+            <div class="option-container">
+              <label><input type="radio" name="supervision" value="0" checked> 0: No requiere supervisión adicional.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="supervision" value="1"> 1: Supervisión ocasional para manejo básico.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="supervision" value="2"> 2: Supervisión constante para evitar complicaciones.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="supervision" value="3"> 3: Necesidad de apoyo especializado continuo.</label>
+            </div>
+          </fieldset>
+          
+          <!-- Sección 7: Aceptación de cuidados y modalidad de atención (0-4 puntos) -->
+          <fieldset>
+            <legend>7. Aceptación de cuidados y modalidad de atención (0-4 puntos)</legend>
+            <div class="option-container">
+              <label><input type="radio" name="aceptacion_cuidados" value="0" checked> 0: Acepta atención completa en cualquier modalidad.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="aceptacion_cuidados" value="1"> 1: Prefiere atención domiciliaria exclusivamente.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="aceptacion_cuidados" value="2"> 2: Prefiere no ser ingresado en centros especializados.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="aceptacion_cuidados" value="3"> 3: Acepta atención limitada a servicios paliativos.</label>
+            </div>
+            <div class="option-container">
+              <label><input type="radio" name="aceptacion_cuidados" value="4"> 4: Rechaza cualquier tipo de asistencia.</label>
+            </div>
+          </fieldset>
+          
           <div>
-            <label for="nombre_paciente">Nombre completo:</label>
-            <input type="text" id="nombre_paciente" class="form-input">
+            <label for="observaciones">Observaciones clínicas:</label>
+            <textarea id="observaciones" rows="3" class="form-input"></textarea>
           </div>
-          <div>
-            <label for="id_paciente">Identificación/NHC:</label>
-            <input type="text" id="id_paciente" class="form-input">
-          </div>
-          <div>
-            <label for="fecha_nacimiento">Fecha de nacimiento:</label>
-            <input type="date" id="fecha_nacimiento" class="form-input">
-          </div>
-          <div>
-            <label for="fecha_evaluacion">Fecha de evaluación:</label>
-            <input type="date" id="fecha_evaluacion" class="form-input">
-          </div>
-        </div>
-        <div>
-          <label for="profesional">Profesional evaluador:</label>
-          <input type="text" id="profesional" class="form-input">
-        </div>
-        <div>
-          <label for="centro">Centro sanitario:</label>
-          <input type="text" id="centro" class="form-input">
-        </div>
-      </fieldset>
-      
-      <!-- Sección 1: Función motora (0-7 puntos) -->
-      <fieldset>
-        <legend>1. Función motora (0-7 puntos)</legend>
-        
-        <!-- A. Movilidad funcional (0-4 puntos) -->
-        <fieldset class="subsection">
-          <legend>A. Movilidad funcional (0-4 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="movilidad_funcional" value="0" checked> 0: Independiente para caminar, cambiar de posición y realizar transferencias.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="movilidad_funcional" value="1"> 1: Necesita ayuda mínima para desplazamientos o transferencias.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="movilidad_funcional" value="2"> 2: Dependencia parcial en desplazamientos o transferencias; requiere apoyo constante.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="movilidad_funcional" value="3"> 3: Totalmente dependiente para movilidad y transferencias; necesita asistencia completa.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="movilidad_funcional" value="4"> 4: Incapacidad total para moverse o realizar transferencias sin intervención especializada.</label>
-          </div>
-        </fieldset>
-        
-        <!-- B. Movilidad fina (0-2 puntos) -->
-        <fieldset class="subsection">
-          <legend>B. Movilidad fina (0-2 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="movilidad_fina" value="0" checked> 0: Función normal en las manos; puede realizar actividades finas como escribir o vestirse.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="movilidad_fina" value="1"> 1: Dificultades moderadas para realizar actividades finas; necesita asistencia parcial.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="movilidad_fina" value="2"> 2: Función gravemente afectada; incapacidad para realizar movimientos finos incluso con asistencia.</label>
-          </div>
-        </fieldset>
-        
-        <!-- C. Resistencia y fatiga (0-1 punto) -->
-        <fieldset class="subsection">
-          <legend>C. Resistencia y fatiga (0-1 punto)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="resistencia_fatiga" value="0" checked> 0: Puede realizar actividades motoras sin fatiga significativa.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="resistencia_fatiga" value="1"> 1: Presenta fatiga severa que limita la realización de actividades incluso con movilidad parcial.</label>
-          </div>
-        </fieldset>
-      </fieldset>
-      
-      <!-- Sección 2: Función bulbar (0-6 puntos) -->
-      <fieldset>
-        <legend>2. Función bulbar (0-6 puntos)</legend>
-        
-        <!-- A. Capacidad de habla y comunicación (0-4 puntos) -->
-        <fieldset class="subsection">
-          <legend>A. Capacidad de habla y comunicación (0-4 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="habla_comunicacion" value="0" checked> 0: Habla normal, sin limitaciones.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="habla_comunicacion" value="1"> 1: Alteraciones leves (habla más lenta o dificultad ocasional para articular palabras).</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="habla_comunicacion" value="2"> 2: Habla severamente afectada, pero funcional (se necesita esfuerzo significativo para comunicarse).</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="habla_comunicacion" value="3"> 3: Pérdida total del habla; depende completamente de dispositivos o cuidadores para comunicarse.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="habla_comunicacion" value="4"> 4: Pérdida total del habla y comunicación limitada, incluso con dispositivos.</label>
-          </div>
-        </fieldset>
-        
-        <!-- B. Uso de dispositivos de comunicación (0-2 puntos) -->
-        <fieldset class="subsection">
-          <legend>B. Uso de dispositivos de comunicación (0-2 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="dispositivo_comunicacion" value="0" checked> 0: Dispositivo disponible y utilizado de manera efectiva.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="dispositivo_comunicacion" value="1"> 1: Dispositivo disponible, pero uso limitado o ineficaz.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="dispositivo_comunicacion" value="2"> 2: Dispositivo no disponible o no utilizado, causando aislamiento significativo.</label>
-          </div>
-        </fieldset>
-      </fieldset>
-      
-      <!-- Sección 3: Función cognitiva y conductual (0-6 puntos) -->
-      <fieldset>
-        <legend>3. Función cognitiva y conductual (0-6 puntos)</legend>
-        
-        <!-- A. Atención y concentración (0-2 puntos) -->
-        <fieldset class="subsection">
-          <legend>A. Atención y concentración (0-2 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="atencion_concentracion" value="0" checked> 0: Atención y concentración normales, sin dificultad para tareas cotidianas.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="atencion_concentracion" value="1"> 1: Dificultades leves, como distracción ocasional.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="atencion_concentracion" value="2"> 2: Dificultades significativas o incapacidad constante para concentrarse en tareas simples.</label>
-          </div>
-        </fieldset>
-        
-        <!-- B. Memoria (0-2 puntos) -->
-        <fieldset class="subsection">
-          <legend>B. Memoria (0-2 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="memoria" value="0" checked> 0: Recuerdo intacto de eventos recientes y capacidad para retener información.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="memoria" value="1"> 1: Pérdida leve de memoria que no afecta significativamente las tareas diarias.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="memoria" value="2"> 2: Pérdida moderada o severa que interfiere con las actividades cotidianas.</label>
-          </div>
-        </fieldset>
-        
-        <!-- C. Lenguaje y fluidez verbal (0-2 puntos) -->
-        <fieldset class="subsection">
-          <legend>C. Lenguaje y fluidez verbal (0-2 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="lenguaje_fluidez" value="0" checked> 0: Lenguaje funcional, puede comunicarse de manera efectiva.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="lenguaje_fluidez" value="1"> 1: Dificultad leve para encontrar palabras o estructurar frases.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="lenguaje_fluidez" value="2"> 2: Dificultades severas en la comunicación, incluso con apoyo.</label>
-          </div>
-        </fieldset>
-      </fieldset>
-      
-      <!-- Sección 4: Apoyo y situación social (0-6 puntos) -->
-      <fieldset>
-        <legend>4. Apoyo y situación social (0-6 puntos)</legend>
-        
-        <!-- A. Apoyo familiar y sobrecarga del cuidador (0-2 puntos) -->
-        <fieldset class="subsection">
-          <legend>A. Apoyo familiar y sobrecarga del cuidador (0-2 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="apoyo_familiar" value="0" checked> 0: Sin signos de sobrecarga ni antecedentes de enfermedad mental significativa.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="apoyo_familiar" value="1"> 1: Estrés moderado o leve impacto emocional, incluso en cuidadores con antecedentes de enfermedad mental bien controlada.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="apoyo_familiar" value="2"> 2: Sobrecarga severa o coexistencia de enfermedades mentales activas que afectan su capacidad para cuidar adecuadamente.</label>
-          </div>
-        </fieldset>
-        
-        <!-- B. Situación económica (0-2 puntos) -->
-        <fieldset class="subsection">
-          <legend>B. Situación económica (0-2 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="situacion_economica" value="0" checked> 0: Sin impacto económico significativo.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="situacion_economica" value="1"> 1: Impacto leve (gastos adicionales o reducciones laborales ocasionales).</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="situacion_economica" value="2"> 2: Impacto severo (reducciones laborales importantes o gastos significativos).</label>
-          </div>
-        </fieldset>
-        
-        <!-- C. Acceso y tramitación de ayudas estatales (0-2 puntos) -->
-        <fieldset class="subsection">
-          <legend>C. Acceso y tramitación de ayudas estatales (0-2 puntos)</legend>
-          <div class="option-container">
-            <label><input type="radio" name="ayudas_estatales" value="0" checked> 0: Todas las ayudas tramitadas, activas y suficientes.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="ayudas_estatales" value="1"> 1: Ayudas activas, pero insuficientes para cubrir los gastos.</label>
-          </div>
-          <div class="option-container">
-            <label><input type="radio" name="ayudas_estatales" value="2"> 2: Ayudas no tramitadas o inexistentes.</label>
-          </div>
-        </fieldset>
-      </fieldset>
-      
-      <!-- Sección 5: Comorbilidades y estado general de salud (0-5 puntos) -->
-      <fieldset>
-        <legend>5. Comorbilidades y estado general de salud (0-5 puntos)</legend>
-        <div class="option-container">
-          <label><input type="radio" name="comorbilidades" value="0" checked> 0: Sin comorbilidades significativas.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="comorbilidades" value="1"> 1: Comorbilidades leves que no afectan su funcionalidad.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="comorbilidades" value="2"> 2: Comorbilidades moderadas con impacto parcial.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="comorbilidades" value="3"> 3: Comorbilidades severas que complican su manejo.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="comorbilidades" value="4"> 4: Múltiples comorbilidades graves.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="comorbilidades" value="5"> 5: Estado crítico por comorbilidades adicionales.</label>
-        </div>
-      </fieldset>
-      
-      <!-- Sección 6: Supervisión de enfermería y cuidados (0-3 puntos) -->
-      <fieldset>
-        <legend>6. Supervisión de enfermería y cuidados (0-3 puntos)</legend>
-        <div class="option-container">
-          <label><input type="radio" name="supervision" value="0" checked> 0: No requiere supervisión adicional.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="supervision" value="1"> 1: Supervisión ocasional para manejo básico.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="supervision" value="2"> 2: Supervisión constante para evitar complicaciones.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="supervision" value="3"> 3: Necesidad de apoyo especializado continuo.</label>
-        </div>
-      </fieldset>
-      
-      <!-- Sección 7: Aceptación de cuidados y modalidad de atención (0-4 puntos) -->
-      <fieldset>
-        <legend>7. Aceptación de cuidados y modalidad de atención (0-4 puntos)</legend>
-        <div class="option-container">
-          <label><input type="radio" name="aceptacion_cuidados" value="0" checked> 0: Acepta atención completa en cualquier modalidad.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="aceptacion_cuidados" value="1"> 1: Prefiere atención domiciliaria exclusivamente.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="aceptacion_cuidados" value="2"> 2: Prefiere no ser ingresado en centros especializados.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="aceptacion_cuidados" value="3"> 3: Acepta atención limitada a servicios paliativos.</label>
-        </div>
-        <div class="option-container">
-          <label><input type="radio" name="aceptacion_cuidados" value="4"> 4: Rechaza cualquier tipo de asistencia.</label>
-        </div>
-      </fieldset>
-      
-      <div>
-        <label for="observaciones">Observaciones clínicas:</label>
-        <textarea id="observaciones" rows="3" class="form-input"></textarea>
+        </form>
       </div>
-    </form>
+      
+      <!-- Pestaña de Anatomía de Enfermedad -->
+      <div id="anatomia-tab" class="tab-pane">
+        <div class="info-panel">
+          <strong>Instrucciones:</strong> Haga clic en las áreas afectadas del paciente para registrar su evolución y los síntomas asociados.
+        </div>
+        
+        <div id="anatomy-controls" class="controls-container">
+          <button id="btn-reset-anatomy" class="secondary-btn">Reiniciar selección</button>
+        </div>
+        
+        <div id="anatomy-container" class="anatomy-container">
+          <div class="anatomy-side">
+            <div id="anatomy-image-container" class="anatomy-image-container">
+              <img id="anatomy-image" src="img/anatomia-muscular.jpg" alt="Figura Anatómica" />
+              <div id="anatomy-overlay" class="anatomy-overlay"></div>
+            </div>
+          </div>
+          
+          <div class="anatomy-side">
+            <div id="selected-areas-container">
+              <h3>Áreas afectadas:</h3>
+              <div id="selected-areas-list">
+                <p class="text-muted">No hay áreas seleccionadas</p>
+              </div>
+            </div>
+            
+            <div id="area-details-form" class="area-details" style="display: none;">
+              <h3 id="area-form-title">Detalles del área</h3>
+              <div class="form-group" id="custom-name-container">
+                <label for="custom-area-name">Nombre personalizado:</label>
+                <input type="text" id="custom-area-name" class="form-input" placeholder="Ej: Musculatura cervical">
+              </div>
+              <div class="form-group">
+                <label>Categoría: <span id="area-category">Personalizada</span></label>
+                <p>Área: <span id="area-name">Personalizada</span></p>
+              </div>
+              <div class="form-group">
+                <label for="severity-level">Nivel de severidad:</label>
+                <select id="severity-level" class="form-input">
+                  <option value="leve">Leve</option>
+                  <option value="moderada">Moderada</option>
+                  <option value="grave">Grave</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="evolution-level">Evolución:</label>
+                <select id="evolution-level" class="form-input">
+                  <option value="estable">Estable</option>
+                  <option value="mejoria">Mejoría</option>
+                  <option value="empeoramiento">Empeoramiento</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="symptom-start-date">Inicio de síntomas:</label>
+                <input type="date" id="symptom-start-date" class="form-input">
+              </div>
+              <div class="form-group">
+                <label for="functional-impact">Impacto funcional:</label>
+                <select id="functional-impact" class="form-input">
+                  <option value="sin-impacto">Sin impacto funcional</option>
+                  <option value="impacto-leve">Impacto leve</option>
+                  <option value="impacto-moderado">Impacto moderado</option>
+                  <option value="impacto-severo">Impacto severo - Requiere asistencia</option>
+                  <option value="perdida-completa">Pérdida completa de la función</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="intervention">Intervenciones:</label>
+                <select id="intervention" class="form-input" multiple size="3">
+                  <option value="fisioterapia">Fisioterapia</option>
+                  <option value="terapia-ocupacional">Terapia ocupacional</option>
+                  <option value="logopedia">Logopedia</option>
+                  <option value="hidroterapia">Hidroterapia</option>
+                  <option value="ortesis">Ortesis</option>
+                  <option value="farmacologico">Tratamiento farmacológico</option>
+                  <option value="observacion">Observación</option>
+                </select>
+                <small>Mantenga presionada la tecla Ctrl para seleccionar múltiples opciones</small>
+              </div>
+              <div class="form-actions">
+                <button id="btn-save-area" class="primary-btn">Guardar</button>
+                <button id="btn-cancel-area" class="secondary-btn">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Contenedor para el gráfico de progresión -->
+        <div id="progression-container" class="progression-section">
+          <h3>Evolución temporal de la enfermedad</h3>
+          <div id="progression-chart" class="progression-chart"></div>
+        </div>
+      </div>
+    </div>
     
     <!-- Resultado -->
     <div class="result" id="result" style="display: none;">
@@ -343,9 +460,16 @@
     </div>
   </div>
   
+  <div class="disclaimer-footer">
+    Esta herramienta no ha sido validada clínicamente y sus resultados deben considerarse meramente orientativos. 
+    Consulte siempre con profesionales sanitarios cualificados.
+  </div>
+  
+  <!-- Fin del contenedor principal -->
+  </div>
+  
   <!-- Inclusión de bibliotecas necesarias desde CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="js/script.js"></script>
 </body>
 </html> 
