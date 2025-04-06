@@ -721,6 +721,9 @@ function setupAnatomySection() {
             anatomyOverlay.innerHTML = '';
         }
         updateSelectedAreasList();
+        
+        // Actualizar la visualización de evolución y comparativa
+        setupProgressionChart();
     }
     
     // Función para restaurar marcadores visuales
@@ -903,6 +906,9 @@ function setupAnatomySection() {
         // Actualizar la lista de áreas seleccionadas
         updateSelectedAreasList();
         
+        // Actualizar la visualización de evolución y comparativa
+        setupProgressionChart();
+        
         // Limpiar todos los campos del formulario
         document.getElementById('symptom-start-date').value = '';
         document.getElementById('functional-impact').value = '';
@@ -1023,7 +1029,7 @@ function setupAnatomySection() {
         // Actualizar localStorage
         saveSelectedAreas();
         
-        // Eliminar el marcador visual
+        // Eliminar el marcado
         const marker = anatomyOverlay.querySelector(`[data-area="${areaName}"]`);
         if (marker) {
             anatomyOverlay.removeChild(marker);
@@ -1031,6 +1037,9 @@ function setupAnatomySection() {
         
         // Actualizar la lista visual
         updateSelectedAreasList();
+        
+        // Actualizar la visualización de evolución y comparativa
+        setupProgressionChart();
     }
     
     // Evento para añadir un área cuando se hace clic en el botón
@@ -1272,21 +1281,58 @@ function setupAnatomySection() {
 
 // Función para configurar el sistema de pestañas
 function setupTabs() {
+    console.log("Configurando sistema de pestañas...");
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabPanes = document.querySelectorAll('.tab-pane');
     
+    if (tabButtons.length === 0 || tabPanes.length === 0) {
+        console.error("No se encontraron elementos de pestañas en el DOM");
+        return;
+    }
+    
+    console.log(`Encontrados: ${tabButtons.length} botones y ${tabPanes.length} paneles`);
+    
+    // Establecer estado inicial
+    tabPanes.forEach(pane => {
+        // Ocultar todos los paneles primero
+        pane.style.display = 'none';
+        pane.classList.remove('active');
+    });
+    
+    // Activar la primera pestaña por defecto
+    if (tabButtons[0] && tabPanes[0]) {
+        tabButtons[0].classList.add('active');
+        tabPanes[0].classList.add('active');
+        tabPanes[0].style.display = 'block';
+    }
+    
+    // Añadir event listeners a los botones
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            console.log(`Tab cliqueado: ${tabId}`);
+            
             // Desactivar todas las pestañas
             tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabPanes.forEach(pane => pane.classList.remove('active'));
+            tabPanes.forEach(pane => {
+                pane.classList.remove('active');
+                pane.style.display = 'none';
+            });
             
             // Activar la pestaña seleccionada
-            const tabId = this.getAttribute('data-tab');
             this.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
+            const activePane = document.getElementById(tabId);
+            if (activePane) {
+                activePane.classList.add('active');
+                activePane.style.display = 'block';
+                console.log(`Activado panel: ${tabId}`);
+            } else {
+                console.error(`No se encontró el panel: ${tabId}`);
+            }
         });
     });
+    
+    console.log("Sistema de pestañas configurado correctamente");
 }
 
 // Función para configurar el gráfico de progresión
@@ -1317,84 +1363,97 @@ function setupProgressionChart() {
 
 // Función para obtener evaluaciones guardadas (simulada para demostración)
 function getSavedEvaluations() {
-    // En una implementación real, esto vendría de una base de datos o almacenamiento local
-    // Por ahora retornamos un array vacío para evitar datos simulados que causen problemas
-    return [];
-    
-    /* DATOS DE DEMOSTRACIÓN COMENTADOS PARA EVITAR INTERFERENCIAS
-    const currentDate = new Date();
-    
-    return [
-        {
-            date: new Date(currentDate.getFullYear(), currentDate.getMonth() - 6, 15).toISOString().split('T')[0],
-            areas: [
-                { name: "Lengua", severity: "leve", category: "bulbar", evolution: "estable" },
-                { name: "Músculos faciales", severity: "leve", category: "bulbar", evolution: "estable" },
-                { name: "Deltoides (C5-C6)", severity: "leve", category: "miembro_superior", evolution: "estable" }
-            ]
-        },
-        {
-            date: new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, 10).toISOString().split('T')[0],
-            areas: [
-                { name: "Lengua", severity: "moderada", category: "bulbar", evolution: "progresiva-lenta" },
-                { name: "Músculos faciales", severity: "moderada", category: "bulbar", evolution: "progresiva-lenta" },
-                { name: "Deltoides (C5-C6)", severity: "moderada", category: "miembro_superior", evolution: "progresiva-lenta" },
-                { name: "Diafragma", severity: "leve", category: "respiratoria", evolution: "estable" }
-            ]
-        },
-        {
-            date: new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 5).toISOString().split('T')[0],
-            areas: [
-                { name: "Lengua", severity: "grave", category: "bulbar", evolution: "progresiva-rapida" },
-                { name: "Músculos faciales", severity: "grave", category: "bulbar", evolution: "progresiva-rapida" },
-                { name: "Deltoides (C5-C6)", severity: "grave", category: "miembro_superior", evolution: "progresiva-rapida" },
-                { name: "Diafragma", severity: "moderada", category: "respiratoria", evolution: "progresiva-lenta" },
-                { name: "Bíceps braquial (C5-C6)", severity: "moderada", category: "miembro_superior", evolution: "progresiva-lenta" }
-            ]
+    // Intentar obtener las áreas seleccionadas de localStorage
+    try {
+        const saved = localStorage.getItem('selectedAreas');
+        if (!saved) {
+            console.log("No hay áreas guardadas en localStorage");
+            return [];
         }
-    ];
-    */
+        
+        const selectedAreas = JSON.parse(saved);
+        if (!selectedAreas || !Array.isArray(selectedAreas) || selectedAreas.length === 0) {
+            console.log("No hay áreas válidas o el array está vacío");
+            return [];
+        }
+        
+        console.log("Áreas cargadas de localStorage:", selectedAreas);
+        
+        // Agrupar áreas por fecha para crear las evaluaciones
+        const areasByDate = {};
+        
+        selectedAreas.forEach(area => {
+            const date = area.startDate || new Date().toISOString().split('T')[0];
+            
+            if (!areasByDate[date]) {
+                areasByDate[date] = [];
+            }
+            
+            areasByDate[date].push({
+                name: area.name,
+                severity: area.severity || 'leve',
+                category: area.category,
+                evolution: area.evolution || 'estable',
+                functionalImpact: area.functionalImpact,
+                intervention: area.intervention
+            });
+        });
+        
+        // Convertir a un array de evaluaciones
+        const evaluations = Object.keys(areasByDate).map(date => ({
+            date: date,
+            areas: areasByDate[date]
+        }));
+        
+        console.log("Evaluaciones generadas:", evaluations);
+        return evaluations;
+    } catch (e) {
+        console.error("Error al cargar evaluaciones desde localStorage:", e);
+        return [];
+    }
 }
 
 // Función para crear el gráfico de progresión
 function createProgressionChart(container, evaluations) {
+    // Verificar si hay datos para mostrar
+    if (!evaluations || evaluations.length === 0) {
+        container.innerHTML = '<div class="no-data">No hay datos de evaluaciones previas para mostrar.</div>';
+        return;
+    }
+    
+    console.log("Creando gráfico de progresión con datos:", evaluations);
+    
     // Preparar datos para el gráfico
     const dates = evaluations.map(eval => {
         const date = new Date(eval.date);
         return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     });
     
-    const categories = {
-        'bulbar': { name: 'Región Bulbar', values: [] },
-        'respiratoria': { name: 'Musculatura Respiratoria', values: [] },
-        'miembro_superior': { name: 'Miembros Superiores', values: [] },
-        'miembro_inferior': { name: 'Miembros Inferiores', values: [] },
-        'cervical': { name: 'Región Cervical', values: [] }
-    };
+    // Crear una estructura para almacenar los puntos de datos individuales
+    const dataPoints = [];
     
-    // Calcular severidad promedio por categoría y fecha
-    evaluations.forEach((eval, index) => {
-        for (const category in categories) {
-            const areasInCategory = eval.areas.filter(area => area.category === category);
-            
-            if (areasInCategory.length === 0) {
-                categories[category].values[index] = 0;
-                continue;
+    // Extraer cada área como un punto de datos individual con su severidad exacta
+    evaluations.forEach((eval, dateIndex) => {
+        eval.areas.forEach(area => {
+            // Solo agregar áreas con severidad válida
+            if (area.severity && area.severity !== 'ninguna') {
+                dataPoints.push({
+                    name: area.name,
+                    category: area.category,
+                    dateIndex: dateIndex,
+                    severity: area.severity,
+                    date: dates[dateIndex]
+                });
             }
-            
-            let severitySum = 0;
-            areasInCategory.forEach(area => {
-                switch(area.severity) {
-                    case 'leve': severitySum += 1; break;
-                    case 'moderada': severitySum += 2; break;
-                    case 'grave': severitySum += 3; break;
-                    default: severitySum += 0;
-                }
-            });
-            
-            categories[category].values[index] = severitySum / areasInCategory.length;
-        }
+        });
     });
+    
+    console.log("Puntos de datos preparados:", dataPoints);
+    
+    if (dataPoints.length === 0) {
+        container.innerHTML = '<div class="no-data">No hay suficientes datos para mostrar la evolución temporal.</div>';
+        return;
+    }
     
     // Crear gráfico (versión simple con HTML/CSS para demostración)
     let chartHTML = `
@@ -1408,29 +1467,38 @@ function createProgressionChart(container, evaluations) {
             <div class="chart-grid">
     `;
     
-    // Crear líneas para cada categoría
-    for (const category in categories) {
-        if (categories[category].values.some(v => v > 0)) {
-            const categoryData = categories[category];
-            const lineColor = getCategoryColor(category);
-            
-            chartHTML += `<div class="chart-line" style="--chart-color: ${lineColor};">`;
-            
-            // Crear puntos en la línea
-            categoryData.values.forEach((value, i) => {
-                if (value > 0) {
-                    const xPos = (i / (dates.length - 1)) * 100;
-                    const yPos = (1 - (value / 3)) * 100;
-                    
-                    chartHTML += `
-                        <div class="chart-point" style="left: ${xPos}%; bottom: ${yPos}%;" title="${categoryData.name}: ${getSeverityLabel(value)} (${dates[i]})"></div>
-                    `;
-                }
-            });
-            
-            chartHTML += `</div>`;
+    // Procesar cada punto individualmente para asignar el color correcto según la severidad
+    dataPoints.forEach(point => {
+        // Calcular posición X (fecha) e Y (severidad)
+        const xPos = dates.length > 1 ? 
+            (point.dateIndex / (dates.length - 1)) * 100 :
+            50; // Centrar si solo hay una fecha
+        
+        // Calcular posición Y basada en la severidad
+        // Importante: En CSS, bottom: 0% es la parte inferior y bottom: 100% es la parte superior
+        let yPos;
+        switch(point.severity) {
+            case 'leve': yPos = 25; break;         // 1/4 desde abajo
+            case 'moderada': yPos = 50; break;     // 2/4 desde abajo (mitad)
+            case 'grave': yPos = 75; break;        // 3/4 desde abajo
+            default: yPos = 0;                     // Sin afectación, abajo del todo
         }
-    }
+        
+        // Determinar el color según la severidad
+        let colorClass;
+        switch(point.severity) {
+            case 'leve': colorClass = 'dot-leve'; break;
+            case 'moderada': colorClass = 'dot-moderada'; break;
+            case 'grave': colorClass = 'dot-grave'; break;
+            default: colorClass = '';
+        }
+        
+        // Crear el punto con su tooltip informativo y color específico
+        chartHTML += `
+            <div class="chart-point ${colorClass}" style="left: ${xPos}%; bottom: ${yPos}%;" 
+                 title="${point.name} (${getCategoryName(point.category)}): ${getSeverityDisplayName(point.severity)} (${point.date})"></div>
+        `;
+    });
     
     // Añadir etiquetas de fechas en el eje X
     chartHTML += `
@@ -1442,12 +1510,19 @@ function createProgressionChart(container, evaluations) {
         chartHTML += `<div class="chart-x-label">${date}</div>`;
     });
     
+    // Añadir leyenda para clarificar los colores
     chartHTML += `
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item"><span class="dot dot-leve"></span> Leve</div>
+                <div class="legend-item"><span class="dot dot-moderada"></span> Moderada</div>
+                <div class="legend-item"><span class="dot dot-grave"></span> Grave</div>
             </div>
         </div>
     `;
     
     container.innerHTML = chartHTML;
+    console.log("Gráfico de progresión creado con éxito");
 }
 
 // Función para obtener color por categoría
@@ -1464,11 +1539,14 @@ function getCategoryColor(category) {
 }
 
 // Función para obtener etiqueta de severidad según valor numérico
-function getSeverityLabel(value) {
-    if (value >= 2.5) return 'Grave';
-    if (value >= 1.5) return 'Moderada';
-    if (value >= 0.5) return 'Leve';
-    return 'Sin afectación';
+function getSeverityDisplayName(severity) {
+    switch(severity) {
+        case 'leve': return 'Leve';
+        case 'moderada': return 'Moderada';
+        case 'grave': return 'Grave';
+        case 'ninguna': return 'Sin afectación';
+        default: return severity;
+    }
 }
 
 // Función para actualizar opciones de fechas en la comparativa

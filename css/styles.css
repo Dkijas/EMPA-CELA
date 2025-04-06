@@ -617,247 +617,75 @@ input[type="radio"]:checked + span {
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  border: 2px solid;
 }
 
 .dot-leve {
   background-color: #CCB800;
+  border-color: #998A00;
 }
 
 .dot-moderada {
   background-color: #CC7000;
+  border-color: #995500;
 }
 
 .dot-grave {
   background-color: #CC0000;
-}
-
-/* Estilos para la comparativa de evaluaciones */
-.evaluation-comparison {
-  margin-top: 30px;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.evaluation-comparison h4 {
-  margin-top: 0;
-  color: #333;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 8px;
-  margin-bottom: 15px;
-}
-
-.comparison-selector {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.comparison-results {
-  background-color: white;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  padding: 15px;
-  min-height: 100px;
-}
-
-#compare-btn {
-  margin-top: 10px;
-}
-
-/* Media queries para responsive design */
-@media (max-width: 768px) {
-  .container {
-    padding: 10px;
-  }
-  
-  fieldset {
-    padding: 10px;
-  }
-  
-  .button-group {
-    flex-direction: column;
-  }
-  
-  button {
-    width: 100%;
-  }
-  
-  .comparison-selector {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Estilos para el sistema de pestañas/solapas */
-.tabs-container {
-  margin-bottom: 20px;
-}
-
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 20px;
-}
-
-.tab-btn {
-  padding: 10px 20px;
-  background-color: #f8f9fa;
-  border: 1px solid var(--border-color);
-  border-bottom: none;
-  border-radius: 5px 5px 0 0;
-  margin-right: 5px;
-  cursor: pointer;
-  font-weight: 500;
-  color: var(--light-text);
-  transition: all 0.2s ease;
-}
-
-.tab-btn:hover {
-  background-color: #e9ecef;
-}
-
-.tab-btn.active {
-  background-color: white;
-  color: var(--primary-color);
-  border-bottom: 2px solid white;
-  margin-bottom: -1px;
-  font-weight: bold;
-}
-
-.tab-content {
-  background-color: white;
-  border-radius: 0 0 5px 5px;
-}
-
-.tab-pane {
-  display: none;
-  padding: 15px 0;
-}
-
-.tab-pane.active {
-  display: block;
-}
-
-@media (max-width: 576px) {
-  .tabs {
-    flex-direction: column;
-    border-bottom: none;
-  }
-  
-  .tab-btn {
-    border-radius: 5px;
-    margin-bottom: 5px;
-    border: 1px solid var(--border-color);
-  }
-  
-  .tab-btn.active {
-    margin-bottom: 5px;
-  }
-}
-
-/* Estilos para el gráfico de progresión */
-.chart-container {
-  position: relative;
-  width: 100%;
-  height: 250px;
-  margin-top: 20px;
-}
-
-.chart-grid {
-  position: absolute;
-  top: 0;
-  left: 40px;
-  right: 0;
-  bottom: 25px;
-  background-color: white;
-  border: 1px solid #ddd;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
-  background-size: 25% 33.33%, 33.33% 25%;
-}
-
-.chart-y-axis {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 40px;
-  bottom: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.chart-y-label {
-  font-size: 10px;
-  text-align: right;
-  padding-right: 5px;
-  color: #666;
-  height: 25%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.chart-x-axis {
-  position: absolute;
-  left: 40px;
-  right: 0;
-  bottom: 0;
-  height: 25px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.chart-x-label {
-  font-size: 10px;
-  text-align: center;
-  padding-top: 5px;
-  color: #666;
-  flex: 1;
-}
-
-.chart-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  --chart-color: #3498db;
+  border-color: #990000;
 }
 
 .chart-point {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background-color: var(--chart-color);
+  background-color: #777;
+  border: 2px solid #666;
   transform: translate(-50%, 50%);
   cursor: pointer;
   pointer-events: auto;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+}
+
+/* Colores específicos para cada nivel de severidad */
+.chart-point.dot-leve {
+  background-color: #CCB800;
+  border-color: #998A00;
+}
+
+.chart-point.dot-moderada {
+  background-color: #CC7000;
+  border-color: #995500;
+}
+
+.chart-point.dot-grave {
+  background-color: #CC0000;
+  border-color: #990000;
 }
 
 .chart-point:hover {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   z-index: 10;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 }
 
 .chart-point:hover::after {
   content: attr(title);
   position: absolute;
-  top: -30px;
+  top: -40px;
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 5px 8px;
-  border-radius: 3px;
-  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
   white-space: nowrap;
   z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .no-data {
@@ -973,4 +801,182 @@ input[type="radio"]:checked + span {
 .btn-outline:hover {
   background-color: #f1f1f1;
   color: #5a6268;
+}
+
+/* Estilos para el sistema de pestañas/solapas */
+.tabs-container {
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  margin-right: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--light-text);
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: #e9ecef;
+}
+
+.tab-btn.active {
+  background-color: white;
+  color: var(--primary-color);
+  border-bottom: 2px solid white;
+  margin-bottom: -1px;
+  font-weight: bold;
+}
+
+.tab-content {
+  background-color: white;
+  border-radius: 0 0 5px 5px;
+}
+
+.tab-pane {
+  display: none;
+  padding: 15px 0;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+@media (max-width: 576px) {
+  .tabs {
+    flex-direction: column;
+    border-bottom: none;
+  }
+  
+  .tab-btn {
+    border-radius: 5px;
+    margin-bottom: 5px;
+    border: 1px solid var(--border-color);
+  }
+  
+  .tab-btn.active {
+    margin-bottom: 5px;
+  }
+}
+
+/* Estilos para el gráfico de progresión */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  margin-top: 20px;
+}
+
+.chart-grid {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  right: 0;
+  bottom: 25px;
+  background-color: white;
+  border: 1px solid #ddd;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 25% 33.33%, 33.33% 25%;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.chart-y-axis {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-weight: 500;
+  color: #555;
+}
+
+.chart-y-label {
+  font-size: 11px;
+  text-align: right;
+  padding-right: 5px;
+  color: #555;
+  height: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.chart-x-axis {
+  position: absolute;
+  left: 40px;
+  right: 0;
+  bottom: 0;
+  height: 25px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.chart-x-label {
+  font-size: 11px;
+  text-align: center;
+  padding-top: 5px;
+  color: #555;
+  flex: 1;
+}
+
+.chart-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  --chart-color: #3498db;
+}
+
+/* Estilos para la comparativa de evaluaciones */
+.evaluation-comparison {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.evaluation-comparison h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.comparison-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.comparison-results {
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  min-height: 100px;
+}
+
+#compare-btn {
+  margin-top: 10px;
 } 
