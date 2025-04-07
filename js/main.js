@@ -1,20 +1,35 @@
 // main.js - Archivo principal para la aplicación EMPA-CELA
 
+// Variable para controlar si ya se ha inicializado
+let isInitialized = false;
+
 // Cargar los módulos JS cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
+    if (isInitialized) return;
+    isInitialized = true;
+    
     console.log('Iniciando aplicación EMPA-CELA...');
     
-    // Inicializar la aplicación
-    initApp();
-    
-    // Configurar manejo de tabs
-    setupTabs();
-    
-    // Inicializar módulos específicos
-    initializeModules();
-    
-    // Configurar botones de interacción global
-    setupGlobalButtons();
+    try {
+        // Asegurarse de que los módulos principales estén disponibles
+        if (typeof EMPA === 'undefined') {
+            throw new Error('El módulo principal (EMPA) no está disponible');
+        }
+
+        // Inicializar módulos en orden específico
+        initializeModules();
+        
+        // Configurar manejo de tabs
+        setupTabs();
+        
+        // Configurar botones de interacción global
+        setupGlobalButtons();
+        
+        console.log('Aplicación EMPA-CELA iniciada correctamente');
+    } catch (error) {
+        console.error('Error al iniciar la aplicación:', error);
+        showErrorMessage('Ha ocurrido un error al iniciar la aplicación: ' + error.message);
+    }
 });
 
 // Configurar el sistema de pestañas
@@ -50,6 +65,16 @@ function setupTabs() {
                                 EMPA_PROGRESSION.getProgressionFromSelectedAreas();
                             }, 300);
                         }
+                    }
+                } else if (targetTab === 'respiratorio-tab') {
+                    console.log('Tab de soporte respiratorio seleccionado - activando módulo');
+                    if (typeof EMPA_RESPIRATORY !== 'undefined') {
+                        // Asegurar que el botón de gráfico esté presente
+                        if (!document.getElementById('generar-grafico-btn')) {
+                            EMPA_RESPIRATORY.addChartButton();
+                        }
+                        // Forzar la evaluación de parámetros
+                        EMPA_RESPIRATORY.forceEvaluation();
                     }
                 }
             }
@@ -97,71 +122,35 @@ function setupGlobalButtons() {
 function initializeModules() {
     console.log('Inicializando módulos EMPA-CELA...');
     
-    // Inicialización de módulos
     try {
-        // Verificar y inicializar módulo principal
-        if (typeof EMPA !== 'undefined') {
-            EMPA.init();
-            console.log('Módulo principal EMPA inicializado');
-        } else {
-            console.warn('Módulo principal EMPA no disponible');
-        }
+        // 1. Inicializar módulo principal primero
+        EMPA.init();
+        console.log('Módulo principal EMPA inicializado');
         
-        // Verificar e inicializar módulo de anatomía
-        if (typeof EMPA_ANATOMY !== 'undefined') {
-            EMPA_ANATOMY.init();
-            console.log('Módulo de anatomía inicializado');
-        } else {
-            console.warn('Módulo de anatomía no disponible');
-        }
+        // 2. Inicializar módulos secundarios
+        const modules = [
+            { name: 'EMPA_ANATOMY', init: () => EMPA_ANATOMY.init() },
+            { name: 'EMPA_CALCULATION', init: () => EMPA_CALCULATION.init() },
+            { name: 'EMPA_PDF', init: () => EMPA_PDF.init() },
+            { name: 'EMPA_RESPIRATORY', init: () => EMPA_RESPIRATORY.initialize() }
+        ];
         
-        // Verificar e inicializar módulo de cálculo
-        if (typeof EMPA_CALCULATION !== 'undefined') {
-            EMPA_CALCULATION.init();
-            console.log('Módulo de cálculo inicializado');
-        } else {
-            console.warn('Módulo de cálculo no disponible');
-        }
-        
-        // Verificar e inicializar módulo de PDF
-        if (typeof EMPA_PDF !== 'undefined') {
-            EMPA_PDF.init();
-            console.log('Módulo de PDF inicializado');
-        } else {
-            console.warn('Módulo de PDF no disponible');
-        }
-        
-        // Verificar e inicializar módulo respiratorio
-        if (typeof EMPA_RESPIRATORY !== 'undefined') {
-            EMPA_RESPIRATORY.initialize();
-            console.log('Módulo respiratorio inicializado');
-        } else {
-            console.warn('Módulo respiratorio no disponible');
-        }
+        modules.forEach(module => {
+            try {
+                if (typeof window[module.name] !== 'undefined') {
+                    module.init();
+                    console.log(`Módulo ${module.name} inicializado correctamente`);
+                } else {
+                    console.warn(`Módulo ${module.name} no disponible`);
+                }
+            } catch (moduleError) {
+                console.error(`Error al inicializar ${module.name}:`, moduleError);
+            }
+        });
         
     } catch (error) {
         console.error('Error al inicializar módulos:', error);
-    }
-}
-
-// Función para inicializar la aplicación
-function initApp() {
-    // Verificar que todos los módulos estén cargados
-    if (typeof EMPA === 'undefined') {
-        console.error('Módulo principal (core.js) no encontrado');
-        showErrorMessage('No se ha podido cargar el módulo principal');
-        return;
-    }
-    
-    // Inicializar módulos
-    try {
-        // Iniciar el módulo principal
-        EMPA.init();
-        
-        console.log('Aplicación EMPA-CELA iniciada correctamente');
-    } catch (error) {
-        console.error('Error al inicializar la aplicación:', error);
-        showErrorMessage('Ha ocurrido un error al iniciar la aplicación');
+        throw error; // Propagar el error para manejarlo en el nivel superior
     }
 }
 
