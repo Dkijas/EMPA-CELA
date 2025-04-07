@@ -32,6 +32,17 @@ const EMPA_PROGRESSION = {
             // Inicializar la sección de progresión si existe
             if (this.elements.progressionContainer) {
                 this.setupProgressionSection();
+                
+                // Configurar evento para el botón de guardar evolución
+                const btnGuardarEvolucion = document.getElementById('btn-guardar-evolucion');
+                if (btnGuardarEvolucion) {
+                    btnGuardarEvolucion.addEventListener('click', () => {
+                        this.guardarEvolucion();
+                    });
+                } else {
+                    console.warn('No se encontró el botón para guardar evolución');
+                }
+                
                 console.log('Módulo de progresión inicializado correctamente');
             } else {
                 console.error('No se pudo inicializar el módulo de progresión: faltan elementos DOM necesarios');
@@ -538,32 +549,36 @@ const EMPA_PROGRESSION = {
         }
     },
     
-    // Obtener datos de progresión a partir de las áreas seleccionadas
+    // Método para obtener datos de progresión desde áreas seleccionadas
     getProgressionFromSelectedAreas: function() {
         try {
-            console.log('Obteniendo datos de progresión a partir de áreas seleccionadas');
+            console.log('Obteniendo datos de progresión desde áreas seleccionadas');
             
-            // Verificar la existencia de las áreas seleccionadas
+            // Intentar cargar datos de evolución guardados
+            try {
+                if (localStorage && localStorage.getItem('empa_evolution_data')) {
+                    const datosGuardados = JSON.parse(localStorage.getItem('empa_evolution_data'));
+                    if (Array.isArray(datosGuardados) && datosGuardados.length > 0) {
+                        console.log('Datos de evolución cargados desde localStorage:', datosGuardados.length, 'puntos');
+                        this.chartData = datosGuardados;
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error al cargar datos de evolución guardados:', error);
+            }
+            
+            // Si no hay datos guardados, intentar usar las áreas seleccionadas actuales
             let areasSeleccionadas = [];
             
-            // Si el módulo tiene directamente las áreas seleccionadas (prioritario)
-            if (this.selectedAreas && this.selectedAreas.length > 0) {
-                areasSeleccionadas = this.selectedAreas;
-                console.log('Áreas obtenidas directamente del módulo PROGRESSION:', areasSeleccionadas.length);
-            }
-            // Intentar obtener las áreas desde el módulo EMPA_ANATOMY (segunda opción)
-            else if (typeof EMPA_ANATOMY !== 'undefined' && EMPA_ANATOMY.selectedAreas) {
+            // Verificar si podemos acceder a las áreas desde el módulo EMPA_ANATOMY
+            if (typeof EMPA_ANATOMY !== 'undefined' && EMPA_ANATOMY.selectedAreas) {
                 areasSeleccionadas = EMPA_ANATOMY.selectedAreas;
-                console.log('Áreas obtenidas desde EMPA_ANATOMY:', areasSeleccionadas.length);
             }
-            // Intentar obtener las áreas desde el módulo EMPA (tercera opción)
+            // Si no está disponible, intentar con el objeto global EMPA
             else if (typeof EMPA !== 'undefined' && EMPA.selectedAreas) {
                 areasSeleccionadas = EMPA.selectedAreas;
-                console.log('Áreas obtenidas desde EMPA:', areasSeleccionadas.length);
             }
-            
-            // Guardar las áreas para tenerlas disponibles más adelante
-            this.selectedAreas = areasSeleccionadas;
             
             // Verificar si hay áreas seleccionadas
             if (!areasSeleccionadas || areasSeleccionadas.length === 0) {
@@ -592,47 +607,13 @@ const EMPA_PROGRESSION = {
             
             console.log('Datos preparados para el gráfico:', currentData);
             
-            // Si no hay datos previos, inicializar con los datos actuales
-            if (!this.chartData || this.chartData.length === 0) {
-                this.chartData = [currentData];
-            } else {
-                // Verificar si ya hay una entrada para hoy
-                const todayString = today.toDateString();
-                const existingTodayIndex = this.chartData.findIndex(entry => {
-                    if (!entry || !entry.date) return false;
-                    try {
-                        const entryDate = new Date(entry.date);
-                        return entryDate.toDateString() === todayString;
-                    } catch (e) {
-                        console.error('Error al comparar fechas:', e);
-                        return false;
-                    }
-                });
-                
-                if (existingTodayIndex >= 0) {
-                    // Actualizar entrada existente para hoy
-                    this.chartData[existingTodayIndex] = currentData;
-                } else {
-                    // Añadir nueva entrada para hoy
-                    this.chartData.push(currentData);
-                }
-            }
+            // Usar solo los datos actuales si no hay historial
+            this.chartData = [currentData];
             
-            console.log('Datos de progresión actualizados:', this.chartData.length, 'puntos de tiempo');
-            
-            // Limpiar el contenedor antes de actualizar
-            if (this.elements.progressionChart) {
-                this.elements.progressionChart.innerHTML = '';
-            }
-            
-            // Actualizar el gráfico
-            this.createProgressionChart();
+            console.log('chartData configurado con áreas seleccionadas:', this.chartData);
         } catch (error) {
             console.error('Error al obtener datos de progresión:', error);
-            // Intentar mostrar un mensaje de error si el elemento está disponible
-            if (this.elements.progressionChart) {
-                this.elements.progressionChart.innerHTML = '<div class="empty-chart-message">Error al procesar los datos de progresión: ' + error.message + '</div>';
-            }
+            this.chartData = [];
         }
     },
     
@@ -658,6 +639,77 @@ const EMPA_PROGRESSION = {
             this.getProgressionFromSelectedAreas();
         } catch (error) {
             console.error('Error al activar pestaña de progresión:', error);
+        }
+    },
+    
+    // Guardar la evolución temporal actual
+    guardarEvolucion: function() {
+        try {
+            console.log('Guardando evolución temporal...');
+            
+            // Verificar si hay áreas seleccionadas
+            if (!EMPA_ANATOMY.selectedAreas || EMPA_ANATOMY.selectedAreas.length === 0) {
+                alert('No hay áreas seleccionadas para guardar en la evolución.');
+                return false;
+            }
+            
+            // Crear copia de las áreas seleccionadas con timestamp actual
+            const areasActuales = JSON.parse(JSON.stringify(EMPA_ANATOMY.selectedAreas));
+            
+            // Añadir timestamp actual
+            const timestamp = new Date().getTime();
+            areasActuales.forEach(area => {
+                area.timestamp = timestamp;
+            });
+            
+            // Intentar cargar evolución guardada previamente
+            let evolucionGuardada = [];
+            try {
+                if (localStorage && localStorage.getItem('empa_evolution_data')) {
+                    evolucionGuardada = JSON.parse(localStorage.getItem('empa_evolution_data'));
+                    if (!Array.isArray(evolucionGuardada)) {
+                        evolucionGuardada = [];
+                    }
+                }
+            } catch (error) {
+                console.error('Error al cargar evolución guardada:', error);
+                evolucionGuardada = [];
+            }
+            
+            // Crear punto de datos actual
+            const puntoActual = {
+                date: new Date(),
+                areas: areasActuales
+            };
+            
+            // Añadir a la evolución guardada
+            evolucionGuardada.push(puntoActual);
+            
+            // Guardar en localStorage
+            try {
+                if (localStorage) {
+                    localStorage.setItem('empa_evolution_data', JSON.stringify(evolucionGuardada));
+                    console.log('Evolución guardada correctamente');
+                    alert('Evolución temporal guardada correctamente.');
+                    
+                    // Actualizar chartData
+                    this.chartData = evolucionGuardada;
+                    
+                    // Actualizar gráfico
+                    this.createProgressionChart();
+                    
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error al guardar evolución:', error);
+                alert('Error al guardar la evolución: ' + error.message);
+            }
+            
+            return false;
+        } catch (error) {
+            console.error('Error en guardarEvolucion:', error);
+            alert('Error al guardar la evolución: ' + error.message);
+            return false;
         }
     }
 }; 
