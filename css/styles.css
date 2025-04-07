@@ -1263,123 +1263,144 @@ select[multiple] option:checked {
 
 /* Estilos para la sección de soporte respiratorio */
 .respiratorio-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 30px;
-  padding: 20px 0;
-  width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 40px;
+    margin-top: 20px;
+    width: 100%;
 }
 
 .respiratorio-section {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    overflow: visible;
+    position: relative;
 }
 
-.respiratorio-section h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: #2c3e50;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 10px;
-}
-
-#respiratorio-tab {
-  padding: 20px;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-#soporte-respiratorio-form fieldset {
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px;
-  margin-bottom: 20px;
-  background-color: #fff;
-}
-
-#soporte-respiratorio-form legend {
-  font-weight: bold;
-  padding: 0 10px;
-  color: #2c3e50;
-}
-
-#soporte-respiratorio-form .form-group {
-  margin-bottom: 15px;
-}
-
-/* Animación para subformularios */
-.subform {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
-  opacity: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.subform.active {
-  max-height: 500px;
-  opacity: 1;
-  margin-top: 10px;
-  margin-bottom: 15px;
-  margin-left: 20px;
-}
-
-/* Mejoras para inputs */
-#soporte-respiratorio-form input[type="number"] {
-  text-align: right;
-  padding-right: 10px;
-}
-
-#soporte-respiratorio-form .option-container {
-  padding: 5px 0;
-  transition: transform 0.2s ease;
-}
-
-#soporte-respiratorio-form .option-container:hover {
-  transform: translateX(5px);
-  background-color: #f0f7ff;
-  border-radius: 4px;
-  padding-left: 5px;
-}
-
-#soporte-respiratorio-form select[multiple] {
-  height: auto;
-  min-height: 100px;
-  padding: 5px;
-}
-
-#soporte-respiratorio-form select[multiple] option {
-  padding: 5px;
-}
-
-#soporte-respiratorio-form select[multiple] option:hover {
-  background-color: #f0f7ff;
-}
-
-/* Feedback para inputs */
-#soporte-respiratorio-form input:focus,
-#soporte-respiratorio-form select:focus,
-#soporte-respiratorio-form textarea:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
-}
-
-/* Responsive para dispositivos pequeños */
-@media (max-width: 768px) {
-  .respiratorio-container {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .respiratorio-section {
+.respiratorio-section fieldset {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
     padding: 15px;
-  }
-  
-  #respiratorio-tab {
-    padding: 10px;
-  }
+    margin-bottom: 20px;
+    background-color: white;
+    position: relative;
+    overflow: visible;
+}
+
+.respiratorio-section legend {
+    font-weight: bold;
+    color: #4a5568;
+    padding: 0 10px;
+    background-color: white;
+}
+
+.respiratorio-section input[type="number"],
+.respiratorio-section input[type="text"],
+.respiratorio-section input[type="date"],
+.respiratorio-section select,
+.respiratorio-section textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.respiratorio-section label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #2d3748;
+}
+
+/* Estilos para opciones en columnas */
+.respiratorio-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.respiratorio-section .unit-label {
+    display: block;
+    color: #718096;
+    font-size: 12px;
+    margin-top: -15px;
+    margin-bottom: 15px;
+}
+
+/* Animaciones para los detalles adicionales */
+.respiratorio-details {
+    display: none;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f0f4f8;
+    border-radius: 8px;
+    border-left: 4px solid #3182ce;
+}
+
+.respiratorio-details.active {
+    display: block;
+    opacity: 1;
+    max-height: 500px;
+    overflow: visible;
+}
+
+/* Estilos para el contenedor del gráfico */
+.respiratory-chart-container {
+    clear: both;
+    width: 100%;
+    overflow: visible;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    z-index: 10;
+    position: relative;
+}
+
+/* Estilos específicos para el botón de generar gráfico */
+.chart-button-container {
+    clear: both;
+    width: 100%;
+    overflow: visible;
+    position: relative;
+    z-index: 20;
+    margin: 25px 0;
+}
+
+/* Hacer que los fieldsets y contenedores tengan overflow visible */
+fieldset, .chart-button-container, .respiratory-chart-container, .respiratory-feedback-container {
+    overflow: visible !important;
+}
+
+/* Asegurar que el icono emoji sea visible */
+.chart-button-container button span {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    line-height: 1;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* Ajuste para dispositivos pequeños */
+@media (max-width: 768px) {
+    .respiratorio-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .respiratorio-options {
+        grid-template-columns: 1fr;
+    }
 } 
