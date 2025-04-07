@@ -3,6 +3,9 @@
  * @module EMPA_RESPIRATORY
  */
 const EMPA_RESPIRATORY = (function() {
+    // Estado privado
+    let isInitialized = false;
+    
     // Estructura de datos para guardar información respiratoria
     let respiratoryData = {
         capacidad: {
@@ -44,74 +47,91 @@ const EMPA_RESPIRATORY = (function() {
     };
 
     // Referencias a elementos DOM
-    const elements = {
-        // Formulario y contenedor
-        form: document.getElementById('soporte-respiratorio-form'),
-        tab: document.getElementById('respiratorio-tab'),
-        
-        // Capacidad ventilatoria
-        cvf: document.getElementById('capacidad-vital-forzada'),
-        pim: document.getElementById('presion-inspiratoria'),
-        pem: document.getElementById('presion-espiratoria'),
-        saturacion: document.getElementById('saturacion-oxigeno'),
-        
-        // Checkboxes para síntomas
-        sintomasCheckboxes: document.querySelectorAll('input[name="sintomas-respiratorios"]'),
-        
-        // VMNI
-        vmniCheckbox: document.getElementById('uso-vmni'),
-        vmniDetails: document.getElementById('vmni-details'),
-        tipoVmni: document.getElementById('tipo-vmni'),
-        horasVmni: document.getElementById('horas-vmni'),
-        inicioVmni: document.getElementById('inicio-vmni'),
-        periodosVmni: document.querySelectorAll('input[name="periodos-vmni"]'),
-        
-        // VMI
-        vmiCheckbox: document.getElementById('uso-vmi'),
-        vmiDetails: document.getElementById('vmi-details'),
-        tipoVmi: document.getElementById('tipo-vmi'),
-        inicioVmi: document.getElementById('inicio-vmi'),
-        dependenciaVmi: document.getElementById('dependencia-vmi'),
-        
-        // Otros dispositivos
-        otrosDispositivos: document.querySelectorAll('input[name="otros-dispositivos"]'),
-        
-        // Dispositivos indicados
-        dispositivosIndicados: document.querySelectorAll('input[name="dispositivos-indicados"]'),
-        motivoNoUso: document.getElementById('motivo-no-uso'),
-        notasDispositivos: document.getElementById('notas-dispositivos'),
-        
-        // Botones
-        guardarBtn: document.getElementById('guardar-respiratorio'),
-        cancelarBtn: document.getElementById('cancelar-respiratorio')
-    };
+    let elements = null;
+
+    /**
+     * Inicializa las referencias a elementos DOM
+     * @returns {Object} Objeto con las referencias a elementos DOM
+     */
+    function initializeElements() {
+        return {
+            // Formulario y contenedor
+            form: document.getElementById('soporte-respiratorio-form'),
+            tab: document.getElementById('respiratorio-tab'),
+            
+            // Capacidad ventilatoria
+            cvf: document.getElementById('capacidad-vital-forzada'),
+            pim: document.getElementById('presion-inspiratoria'),
+            pem: document.getElementById('presion-espiratoria'),
+            saturacion: document.getElementById('saturacion-oxigeno'),
+            
+            // Checkboxes para síntomas
+            sintomasCheckboxes: document.querySelectorAll('input[name="sintomas-respiratorios"]'),
+            
+            // VMNI
+            vmniCheckbox: document.getElementById('uso-vmni'),
+            vmniDetails: document.getElementById('vmni-details'),
+            tipoVmni: document.getElementById('tipo-vmni'),
+            horasVmni: document.getElementById('horas-vmni'),
+            inicioVmni: document.getElementById('inicio-vmni'),
+            periodosVmni: document.querySelectorAll('input[name="periodos-vmni"]'),
+            
+            // VMI
+            vmiCheckbox: document.getElementById('uso-vmi'),
+            vmiDetails: document.getElementById('vmi-details'),
+            tipoVmi: document.getElementById('tipo-vmi'),
+            inicioVmi: document.getElementById('inicio-vmi'),
+            dependenciaVmi: document.getElementById('dependencia-vmi'),
+            
+            // Otros dispositivos
+            otrosDispositivos: document.querySelectorAll('input[name="otros-dispositivos"]'),
+            
+            // Dispositivos indicados
+            dispositivosIndicados: document.querySelectorAll('input[name="dispositivos-indicados"]'),
+            motivoNoUso: document.getElementById('motivo-no-uso'),
+            notasDispositivos: document.getElementById('notas-dispositivos'),
+            
+            // Botones
+            guardarBtn: document.getElementById('guardar-respiratorio'),
+            cancelarBtn: document.getElementById('cancelar-respiratorio')
+        };
+    }
 
     /**
      * Inicializa el módulo de evaluación respiratoria
      */
     function initialize() {
-        console.log('Inicializando módulo de evaluación respiratoria...');
-        
-        if (!validateElements()) {
-            console.error('No se pudieron encontrar todos los elementos necesarios para el módulo respiratorio');
+        if (isInitialized) {
+            console.warn('El módulo respiratorio ya está inicializado');
             return;
         }
+
+        console.log('Inicializando módulo de evaluación respiratoria...');
         
-        // Añadir estilos para el feedback de evaluación
-        addFeedbackStyles();
-        
-        // Añadir botón para generar gráfico
-        addChartButton();
-        
-        setupEventListeners();
-        
-        // Intentar cargar datos guardados
-        const datosGuardados = loadSavedData();
-        
-        // Evaluar parámetros inmediatamente después de inicializar
-        setTimeout(evaluateRespiratoryParameters, 500);
-        
-        console.log('Módulo de evaluación respiratoria inicializado');
+        try {
+            // Inicializar elementos
+            elements = initializeElements();
+            
+            if (!validateElements()) {
+                console.error('No se pudieron encontrar todos los elementos necesarios para el módulo respiratorio');
+                return;
+            }
+            
+            // Añadir estilos para el feedback de evaluación
+            addFeedbackStyles();
+            
+            // Añadir botón para generar gráfico
+            addChartButton();
+            
+            // Configurar event listeners
+            setupEventListeners();
+            
+            isInitialized = true;
+            console.log('Módulo de evaluación respiratoria inicializado correctamente');
+        } catch (error) {
+            console.error('Error al inicializar el módulo respiratorio:', error);
+            throw error;
+        }
     }
     
     /**
@@ -147,13 +167,11 @@ const EMPA_RESPIRATORY = (function() {
             elements.vmniCheckbox.addEventListener('change', function() {
                 if (this.checked) {
                     elements.vmniDetails.style.display = 'block';
-                    // Usar setTimeout para permitir que el display:block tome efecto primero
                     setTimeout(() => {
                         elements.vmniDetails.classList.add('active');
                     }, 10);
                 } else {
                     elements.vmniDetails.classList.remove('active');
-                    // Esperar a que termine la animación antes de ocultar
                     setTimeout(() => {
                         elements.vmniDetails.style.display = 'none';
                     }, 300);
@@ -176,6 +194,24 @@ const EMPA_RESPIRATORY = (function() {
                     setTimeout(() => {
                         elements.vmiDetails.style.display = 'none';
                     }, 300);
+                }
+            });
+        }
+        
+        // Vincular el botón de generar gráfico
+        const generateChartBtn = document.getElementById('generar-grafico-btn');
+        if (generateChartBtn) {
+            generateChartBtn.addEventListener('click', function() {
+                createRespiratoryChart();
+                // Mostrar el contenedor del gráfico
+                const chartContainer = document.getElementById('respiratory-chart-container');
+                if (chartContainer) {
+                    chartContainer.style.display = 'block';
+                    setTimeout(() => {
+                        chartContainer.classList.add('active');
+                        // Desplazar suavemente hacia el gráfico
+                        chartContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 10);
                 }
             });
         }
@@ -329,85 +365,38 @@ const EMPA_RESPIRATORY = (function() {
     function createRespiratoryChart() {
         console.log('Creando gráfico de parámetros respiratorios...');
         
-        // Buscar o crear contenedor para el gráfico
-        let chartContainer = document.getElementById('respiratory-chart-container');
-        if (chartContainer) {
-            // Si ya existe un contenedor, eliminarlo para crear uno nuevo
-            chartContainer.remove();
-            chartContainer = null;
-        }
-        
-        // Buscar la sección donde insertar el gráfico
-        const firstSection = document.querySelector('.respiratorio-section');
-        if (!firstSection) {
-            console.error('No se encontró un contenedor adecuado para el gráfico');
+        // Obtener el contenedor del gráfico
+        const chartContainer = document.getElementById('respiratory-chart-container');
+        if (!chartContainer) {
+            console.error('No se encontró el contenedor del gráfico');
             return;
         }
         
-        // Crear contenedor para el gráfico
-        chartContainer = document.createElement('div');
-        chartContainer.id = 'respiratory-chart-container';
-        chartContainer.className = 'respiratory-chart-container';
-        chartContainer.style.marginTop = '30px';
-        chartContainer.style.marginBottom = '30px';
-        chartContainer.style.padding = '20px';
-        chartContainer.style.borderRadius = '8px';
-        chartContainer.style.backgroundColor = '#f5f9ff';
-        chartContainer.style.border = '2px solid #d1e3ff';
-        chartContainer.style.boxShadow = '0 3px 10px rgba(0, 0, 0, 0.1)';
-        chartContainer.style.position = 'relative';
-        chartContainer.style.zIndex = '10';
-        chartContainer.style.clear = 'both';
-        chartContainer.style.overflow = 'visible';
-        
-        // Añadir título
-        const chartTitle = document.createElement('h4');
-        chartTitle.textContent = 'Visualización de parámetros respiratorios';
-        chartTitle.style.marginTop = '0';
-        chartTitle.style.marginBottom = '20px';
-        chartTitle.style.color = '#2c5282';
-        chartTitle.style.borderBottom = '2px solid #d1e3ff';
-        chartTitle.style.paddingBottom = '10px';
-        chartTitle.style.fontSize = '16px';
-        chartTitle.style.textAlign = 'center';
-        chartContainer.appendChild(chartTitle);
+        // Limpiar contenido existente
+        chartContainer.innerHTML = '';
         
         // Crear el div para el gráfico
         const chartDiv = document.createElement('div');
         chartDiv.id = 'respiratory-chart';
-        chartDiv.className = 'respiratory-chart';
+        chartDiv.style.height = '250px';
+        chartDiv.style.position = 'relative';
+        chartDiv.style.marginTop = '20px';
+        chartDiv.style.marginBottom = '30px';
+        chartDiv.style.display = 'flex';
+        chartDiv.style.justifyContent = 'space-around';
+        chartDiv.style.alignItems = 'flex-end';
+        chartDiv.style.padding = '20px';
+        chartDiv.style.backgroundColor = '#fff';
+        chartDiv.style.borderRadius = '8px';
+        chartDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+        
         chartContainer.appendChild(chartDiv);
         
-        // Insertar antes del contenedor de feedback si existe
-        const feedbackContainer = document.getElementById('respiratory-feedback');
-        if (feedbackContainer) {
-            firstSection.insertBefore(chartContainer, feedbackContainer);
-        } else {
-            // Insertar después del botón
-            const buttonContainer = document.querySelector('.chart-button-container');
-            if (buttonContainer) {
-                buttonContainer.parentNode.insertBefore(chartContainer, buttonContainer.nextSibling);
-            } else {
-                firstSection.appendChild(chartContainer);
-            }
-        }
-        
         // Obtener valores para el gráfico
-        // Si no tenemos datos guardados, intentar obtenerlos del formulario directamente
-        let cvfValue, pimValue, pemValue, satValue;
-        
-        if (respiratoryData && respiratoryData.capacidad) {
-            cvfValue = respiratoryData.capacidad.cvf;
-            pimValue = respiratoryData.capacidad.pim;
-            pemValue = respiratoryData.capacidad.pem;
-            satValue = respiratoryData.capacidad.saturacion;
-        } else {
-            // Recolectar valores directamente del formulario
-            cvfValue = elements.cvf ? parseFloat(elements.cvf.value) || null : null;
-            pimValue = elements.pim ? parseFloat(elements.pim.value) || null : null;
-            pemValue = elements.pem ? parseFloat(elements.pem.value) || null : null;
-            satValue = elements.saturacion ? parseFloat(elements.saturacion.value) || null : null;
-        }
+        const cvfValue = elements.cvf ? parseFloat(elements.cvf.value) || null : null;
+        const pimValue = elements.pim ? parseFloat(elements.pim.value) || null : null;
+        const pemValue = elements.pem ? parseFloat(elements.pem.value) || null : null;
+        const satValue = elements.saturacion ? parseFloat(elements.saturacion.value) || null : null;
         
         // Verificar si hay suficientes datos para mostrar
         if (!cvfValue && !pimValue && !pemValue && !satValue) {
@@ -418,26 +407,9 @@ const EMPA_RESPIRATORY = (function() {
             noDataMsg.style.padding = '40px 20px';
             noDataMsg.style.color = '#666';
             noDataMsg.style.fontStyle = 'italic';
-            chartContainer.appendChild(noDataMsg);
+            chartDiv.appendChild(noDataMsg);
             return;
         }
-        
-        // Crear contenido del gráfico
-        const chart = document.getElementById('respiratory-chart');
-        chart.innerHTML = ''; // Limpiar contenido existente
-        
-        // Estilos base para el gráfico
-        chart.style.height = '250px';
-        chart.style.position = 'relative';
-        chart.style.marginTop = '20px';
-        chart.style.marginBottom = '30px';
-        chart.style.display = 'flex';
-        chart.style.borderBottom = '2px solid #ccc';
-        chart.style.paddingBottom = '30px';
-        chart.style.backgroundImage = 'linear-gradient(180deg, rgba(200,200,200,0.1) 1px, transparent 1px)';
-        chart.style.backgroundSize = '100% 10%';
-        chart.style.backgroundPosition = '0 0';
-        chart.style.overflow = 'visible';
         
         // Definir parámetros para mostrar en el gráfico
         const params = [
@@ -452,20 +424,12 @@ const EMPA_RESPIRATORY = (function() {
         
         // Crear barras para cada parámetro
         validParams.forEach((param, index) => {
-            // Calcular ancho de cada barra
-            const barWidth = 100 / validParams.length;
-            
-            // Crear contenedor para la barra
             const barContainer = document.createElement('div');
             barContainer.className = 'chart-bar-container';
-            barContainer.style.width = `${barWidth}%`;
-            barContainer.style.height = '100%';
-            barContainer.style.position = 'relative';
             barContainer.style.display = 'flex';
             barContainer.style.flexDirection = 'column';
             barContainer.style.alignItems = 'center';
-            barContainer.style.padding = '0 10px';
-            barContainer.style.overflow = 'visible';
+            barContainer.style.width = `${90 / validParams.length}%`;
             
             // Determinar si el valor está dentro del rango normal
             const isNormal = param.value >= param.min && param.value <= param.max;
@@ -473,125 +437,105 @@ const EMPA_RESPIRATORY = (function() {
             // Crear barra
             const bar = document.createElement('div');
             bar.className = `chart-bar ${isNormal ? 'normal-bar' : 'altered-bar'}`;
-            bar.style.width = '60px';
-            bar.style.position = 'absolute';
-            bar.style.bottom = '0';
+            bar.style.width = '40px';
             bar.style.backgroundColor = isNormal ? '#4CAF50' : '#FF9800';
             bar.style.borderRadius = '4px 4px 0 0';
+            bar.style.position = 'relative';
             bar.style.transition = 'height 0.8s ease-out';
-            bar.style.display = 'flex';
-            bar.style.justifyContent = 'center';
-            bar.style.alignItems = 'flex-start';
-            bar.style.overflow = 'visible';
-            bar.style.zIndex = '5';
             
-            // Animar altura de la barra (de 0 a valor actual)
+            // Calcular altura de la barra
+            let heightPercent;
+            if (param.id === 'sat') {
+                heightPercent = ((param.value - 70) / 30) * 100;
+            } else if (param.id === 'cvf') {
+                heightPercent = param.value;
+            } else {
+                const maxRef = Math.max(param.max * 1.2, 150);
+                heightPercent = (param.value / maxRef) * 100;
+            }
+            
+            // Limitar altura entre 5% y 95%
+            heightPercent = Math.min(Math.max(heightPercent, 5), 95);
+            
+            // Aplicar altura con animación
             setTimeout(() => {
-                // Normalizar el valor a un porcentaje para la altura (máximo 100%)
-                // Para saturación, considerar un mínimo de 70%
-                let heightPercent;
-                if (param.id === 'sat') {
-                    // Escalar de 70-100 a 0-100
-                    heightPercent = ((param.value - 70) / 30) * 100;
-                } else if (param.id === 'cvf') {
-                    // Para CVF, el valor ya es un porcentaje
-                    heightPercent = param.value;
-                } else {
-                    // Para PIM y PEM, usar el rango normal como referencia
-                    const maxRef = Math.max(param.max * 1.2, 150); // 20% más que el máximo normal o 150
-                    heightPercent = (param.value / maxRef) * 100;
-                }
-                
-                // Limitar a 95% para dejar espacio para el valor
-                heightPercent = Math.min(heightPercent, 95);
-                
-                // Altura mínima visible
-                heightPercent = Math.max(heightPercent, 5);
-                
                 bar.style.height = `${heightPercent}%`;
             }, 100);
             
-            // Añadir valor en la parte superior de la barra
+            // Añadir valor en la parte superior
             const valueLabel = document.createElement('div');
-            valueLabel.className = 'chart-value-label';
+            valueLabel.className = 'chart-value';
             valueLabel.textContent = `${param.value}${param.unidad}`;
             valueLabel.style.position = 'absolute';
             valueLabel.style.top = '-25px';
-            valueLabel.style.fontWeight = 'bold';
-            valueLabel.style.color = isNormal ? '#2C7A33' : '#E65100';
-            valueLabel.style.zIndex = '6';
-            valueLabel.style.textAlign = 'center';
             valueLabel.style.width = '100%';
-            valueLabel.style.overflow = 'visible';
+            valueLabel.style.textAlign = 'center';
+            valueLabel.style.color = isNormal ? '#2C7A33' : '#E65100';
+            valueLabel.style.fontWeight = 'bold';
             bar.appendChild(valueLabel);
             
             // Añadir etiqueta del parámetro
             const label = document.createElement('div');
             label.className = 'chart-label';
             label.textContent = param.label;
-            label.style.position = 'absolute';
-            label.style.bottom = '-25px';
+            label.style.marginTop = '10px';
             label.style.fontWeight = 'bold';
             label.style.color = '#333';
-            label.style.width = '100%';
-            label.style.textAlign = 'center';
-            label.style.zIndex = '6';
             
-            // Añadir elementos al contenedor
+            // Añadir rango de referencia
+            const rangeLabel = document.createElement('div');
+            rangeLabel.className = 'chart-range';
+            rangeLabel.textContent = `(${param.min}-${param.max}${param.unidad})`;
+            rangeLabel.style.fontSize = '12px';
+            rangeLabel.style.color = '#666';
+            rangeLabel.style.marginTop = '5px';
+            
             barContainer.appendChild(bar);
             barContainer.appendChild(label);
-            chart.appendChild(barContainer);
+            barContainer.appendChild(rangeLabel);
+            chartDiv.appendChild(barContainer);
         });
         
-        // Añadir leyenda al gráfico
+        // Añadir leyenda
         const legend = document.createElement('div');
         legend.className = 'chart-legend';
         legend.style.display = 'flex';
         legend.style.justifyContent = 'center';
         legend.style.gap = '20px';
-        legend.style.marginTop = '30px';
-        legend.style.fontSize = '12px';
+        legend.style.marginTop = '20px';
         
-        // Añadir leyenda para valores normales
-        const normalLegend = document.createElement('div');
-        normalLegend.style.display = 'flex';
-        normalLegend.style.alignItems = 'center';
+        // Leyenda para valores normales
+        const normalLegend = createLegendItem('#4CAF50', 'Valores normales');
+        const alteredLegend = createLegendItem('#FF9800', 'Valores alterados');
         
-        const normalColor = document.createElement('span');
-        normalColor.style.display = 'inline-block';
-        normalColor.style.width = '15px';
-        normalColor.style.height = '15px';
-        normalColor.style.backgroundColor = '#4CAF50';
-        normalColor.style.marginRight = '5px';
-        normalColor.style.borderRadius = '2px';
-        
-        normalLegend.appendChild(normalColor);
-        normalLegend.appendChild(document.createTextNode('Valores normales'));
-        
-        // Añadir leyenda para valores alterados
-        const alteredLegend = document.createElement('div');
-        alteredLegend.style.display = 'flex';
-        alteredLegend.style.alignItems = 'center';
-        
-        const alteredColor = document.createElement('span');
-        alteredColor.style.display = 'inline-block';
-        alteredColor.style.width = '15px';
-        alteredColor.style.height = '15px';
-        alteredColor.style.backgroundColor = '#FF9800';
-        alteredColor.style.marginRight = '5px';
-        alteredColor.style.borderRadius = '2px';
-        
-        alteredLegend.appendChild(alteredColor);
-        alteredLegend.appendChild(document.createTextNode('Valores alterados'));
-        
-        // Añadir ambas leyendas
         legend.appendChild(normalLegend);
         legend.appendChild(alteredLegend);
-        
-        // Añadir leyenda al contenedor
         chartContainer.appendChild(legend);
         
-        console.log('Gráfico de parámetros respiratorios creado con éxito');
+        console.log('Gráfico creado exitosamente');
+    }
+    
+    function createLegendItem(color, text) {
+        const item = document.createElement('div');
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.gap = '5px';
+        
+        const colorBox = document.createElement('div');
+        colorBox.style.width = '12px';
+        colorBox.style.height = '12px';
+        colorBox.style.backgroundColor = color;
+        colorBox.style.borderRadius = '2px';
+        
+        const label = document.createElement('span');
+        label.textContent = text;
+        label.style.fontSize = '12px';
+        label.style.color = '#666';
+        
+        item.appendChild(colorBox);
+        item.appendChild(label);
+        
+        return item;
     }
     
     /**
@@ -738,150 +682,6 @@ const EMPA_RESPIRATORY = (function() {
     }
     
     /**
-     * Carga datos guardados en localStorage
-     * @returns {Object|null} Los datos cargados o null si no hay datos
-     */
-    function loadSavedData() {
-        try {
-            if (localStorage && localStorage.getItem('empa_respiratory_data')) {
-                const savedData = JSON.parse(localStorage.getItem('empa_respiratory_data'));
-                
-                if (savedData) {
-                    console.log('Datos respiratorios cargados desde localStorage');
-                    respiratoryData = savedData;
-                    populateForm(savedData);
-                    return savedData;
-                }
-            }
-        } catch (error) {
-            console.error('Error al cargar datos guardados:', error);
-        }
-        
-        console.log('No se encontraron datos respiratorios guardados');
-        return null;
-    }
-    
-    /**
-     * Rellena el formulario con los datos guardados
-     * @param {Object} data - Datos a cargar en el formulario
-     */
-    function populateForm(data) {
-        if (!data) return;
-        
-        // Restaurar capacidad ventilatoria
-        if (data.capacidad) {
-            if (elements.cvf && data.capacidad.cvf !== null) {
-                elements.cvf.value = data.capacidad.cvf;
-            }
-            
-            if (elements.pim && data.capacidad.pim !== null) {
-                elements.pim.value = data.capacidad.pim;
-            }
-            
-            if (elements.pem && data.capacidad.pem !== null) {
-                elements.pem.value = data.capacidad.pem;
-            }
-            
-            if (elements.saturacion && data.capacidad.saturacion !== null) {
-                elements.saturacion.value = data.capacidad.saturacion;
-            }
-        }
-        
-        // Restaurar síntomas respiratorios
-        if (data.sintomas && Array.isArray(data.sintomas)) {
-            elements.sintomasCheckboxes.forEach(checkbox => {
-                checkbox.checked = data.sintomas.includes(checkbox.value);
-            });
-        }
-        
-        // Restaurar dispositivos VMNI
-        if (data.dispositivos && data.dispositivos.vmni) {
-            if (elements.vmniCheckbox) {
-                elements.vmniCheckbox.checked = data.dispositivos.vmni.enUso;
-                
-                // Disparar evento change para que se muestre/oculte la sección
-                const event = new Event('change');
-                elements.vmniCheckbox.dispatchEvent(event);
-            }
-            
-            // Restaurar detalles VMNI si está en uso
-            if (data.dispositivos.vmni.enUso) {
-                if (elements.tipoVmni && data.dispositivos.vmni.tipo) {
-                    elements.tipoVmni.value = data.dispositivos.vmni.tipo;
-                }
-                
-                if (elements.horasVmni && data.dispositivos.vmni.horasUso !== null) {
-                    elements.horasVmni.value = data.dispositivos.vmni.horasUso;
-                }
-                
-                if (elements.inicioVmni && data.dispositivos.vmni.fechaInicio) {
-                    elements.inicioVmni.value = data.dispositivos.vmni.fechaInicio;
-                }
-                
-                // Restaurar períodos
-                if (elements.periodosVmni && data.dispositivos.vmni.periodos) {
-                    elements.periodosVmni.forEach(checkbox => {
-                        checkbox.checked = data.dispositivos.vmni.periodos.includes(checkbox.value);
-                    });
-                }
-            }
-        }
-        
-        // Restaurar dispositivos VMI
-        if (data.dispositivos && data.dispositivos.vmi) {
-            if (elements.vmiCheckbox) {
-                elements.vmiCheckbox.checked = data.dispositivos.vmi.enUso;
-                
-                // Disparar evento change para que se muestre/oculte la sección
-                const event = new Event('change');
-                elements.vmiCheckbox.dispatchEvent(event);
-            }
-            
-            // Restaurar detalles VMI si está en uso
-            if (data.dispositivos.vmi.enUso) {
-                if (elements.tipoVmi && data.dispositivos.vmi.tipo) {
-                    elements.tipoVmi.value = data.dispositivos.vmi.tipo;
-                }
-                
-                if (elements.inicioVmi && data.dispositivos.vmi.fechaInicio) {
-                    elements.inicioVmi.value = data.dispositivos.vmi.fechaInicio;
-                }
-                
-                if (elements.dependenciaVmi && data.dispositivos.vmi.dependencia) {
-                    elements.dependenciaVmi.value = data.dispositivos.vmi.dependencia;
-                }
-            }
-        }
-        
-        // Restaurar otros dispositivos
-        if (data.dispositivos && data.dispositivos.otrosDispositivos) {
-            elements.otrosDispositivos.forEach(checkbox => {
-                checkbox.checked = data.dispositivos.otrosDispositivos.includes(checkbox.value);
-            });
-        }
-        
-        // Restaurar dispositivos indicados
-        if (data.dispositivosIndicados) {
-            if (data.dispositivosIndicados.tipos) {
-                elements.dispositivosIndicados.forEach(checkbox => {
-                    checkbox.checked = data.dispositivosIndicados.tipos.includes(checkbox.value);
-                });
-            }
-            
-            if (elements.motivoNoUso && data.dispositivosIndicados.motivo) {
-                elements.motivoNoUso.value = data.dispositivosIndicados.motivo;
-            }
-            
-            if (elements.notasDispositivos && data.dispositivosIndicados.observaciones) {
-                elements.notasDispositivos.value = data.dispositivosIndicados.observaciones;
-            }
-        }
-        
-        // Evaluar datos después de cargar
-        setTimeout(evaluateRespiratoryParameters, 100);
-    }
-    
-    /**
      * Obtiene los datos de evaluación respiratoria
      * @returns {Object} Datos de evaluación respiratoria
      */
@@ -896,45 +696,19 @@ const EMPA_RESPIRATORY = (function() {
     function evaluateRespiratoryParameters() {
         console.log('Evaluando parámetros respiratorios...');
         
-        // Obtener el primer fieldset dentro de la primera sección respiratoria
-        const firstSection = document.querySelector('.respiratorio-section');
-        const targetFieldset = firstSection ? firstSection.querySelector('fieldset') : null;
-        
-        // Contenedor para mostrar resultados
-        let feedbackContainer = document.getElementById('respiratory-feedback');
+        // Obtener el contenedor de feedback
+        const feedbackContainer = document.getElementById('respiratory-feedback');
         if (!feedbackContainer) {
-            // Crear contenedor si no existe
-            feedbackContainer = document.createElement('div');
-            feedbackContainer.id = 'respiratory-feedback';
-            feedbackContainer.className = 'respiratory-feedback-container';
-            
-            // Insertar después del primer fieldset o como último hijo si no se encuentra
-            if (targetFieldset) {
-                targetFieldset.parentNode.insertBefore(feedbackContainer, targetFieldset.nextSibling);
-            } else if (firstSection) {
-                firstSection.appendChild(feedbackContainer);
-            } else {
-                // Buscar otra alternativa si no encontramos el contenedor adecuado
-                const respiratorioTab = document.getElementById('respiratorio-tab');
-                if (respiratorioTab) {
-                    respiratorioTab.appendChild(feedbackContainer);
-                } else {
-                    console.error('No se encontró un contenedor adecuado para el feedback');
-                    return;
-                }
-            }
+            console.error('No se encontró el contenedor de feedback');
+            return;
         }
-        
-        // Asegurar visibilidad del contenedor
-        feedbackContainer.style.display = 'block';
         
         // Limpiar contenido anterior
         feedbackContainer.innerHTML = '';
         
-        // Crear cabecera de resultados
-        const header = document.createElement('h4');
-        header.textContent = 'Evaluación de parámetros respiratorios';
-        feedbackContainer.appendChild(header);
+        // Mostrar el contenedor con animación
+        feedbackContainer.style.display = 'block';
+        setTimeout(() => feedbackContainer.classList.add('active'), 10);
         
         // Verificar si hay algún valor para evaluar
         const cvfValue = elements.cvf ? parseFloat(elements.cvf.value) : null;
@@ -1197,6 +971,8 @@ const EMPA_RESPIRATORY = (function() {
      * Añade el botón para generar el gráfico de visualización
      */
     function addChartButton() {
+        console.log('Añadiendo botón para generar gráfico...');
+        
         // Buscar la sección respiratoria
         const firstSection = document.querySelector('.respiratorio-section');
         if (!firstSection) {
@@ -1209,6 +985,12 @@ const EMPA_RESPIRATORY = (function() {
         
         if (!fieldset) {
             console.error('No se pudo encontrar un fieldset adecuado para añadir el botón');
+            return;
+        }
+        
+        // Verificar si el botón ya existe
+        if (document.getElementById('generar-grafico-btn')) {
+            console.log('El botón ya existe, no se añadirá uno nuevo');
             return;
         }
         
@@ -1296,18 +1078,18 @@ const EMPA_RESPIRATORY = (function() {
         // Añadir el contenedor después del fieldset
         fieldset.parentNode.insertBefore(buttonContainer, fieldset.nextSibling);
         
-        console.log('Botón para generar gráfico añadido');
+        console.log('Botón para generar gráfico añadido correctamente');
     }
     
     // API pública del módulo
     return {
-        initialize: initialize,
-        getRespiratoryData: getRespiratoryData,
-        saveRespiratoryData: saveRespiratoryData,
-        resetForm: resetForm,
-        evaluateRespiratoryParameters: evaluateRespiratoryParameters,
-        addFeedbackStyles: addFeedbackStyles,
-        forceEvaluation: forceEvaluation,
+        initialize,
+        getRespiratoryData: () => respiratoryData,
+        saveRespiratoryData,
+        resetForm,
+        evaluateRespiratoryParameters,
+        addFeedbackStyles,
+        forceEvaluation,
         createChart: createRespiratoryChart
     };
 })();

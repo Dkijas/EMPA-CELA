@@ -5,16 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escala EMPA-CELA Interactiva</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/modules/anatomy.css">
   
-  <!-- Cargar módulos -->
-  <script src="js/modules/core.js"></script>
-  <script src="js/modules/tabs.js"></script>
-  <script src="js/modules/anatomy.js"></script>
-  <script src="js/modules/progression.js"></script>
-  <script src="js/modules/calculation.js"></script>
-  <script src="js/modules/pdf.js"></script>
-  <script src="js/modules/respiratory.js"></script>
-  <script src="js/main.js"></script>
+  <!-- Inclusión de bibliotecas necesarias desde CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Utilidades (cargar primero) -->
+  <script src="js/utils/state.js"></script>
+  <script src="js/utils/events.js"></script>
+  <script src="js/utils/storage.js"></script>
+
+  <!-- Módulos de anatomía -->
+  <script src="js/modules/anatomy/markers.js"></script>
+  <script src="js/modules/anatomy/form.js"></script>
+  <script src="js/modules/anatomy/index.js"></script>
+
+  <!-- Módulos principales -->
+  <script defer src="js/modules/core.js"></script>
+  <script defer src="js/modules/calculation.js"></script>
+  <script defer src="js/modules/pdf.js"></script>
+  <script defer src="js/modules/respiratory.js"></script>
+  <script defer src="js/main.js"></script>
 </head>
 <body>
   <div class="container">
@@ -332,70 +344,70 @@
       <!-- Pestaña de Anatomía de la Enfermedad -->
       <div id="anatomia-tab" class="tab-pane">
         <div class="info-panel">
-          <strong>Instrucciones:</strong> Haga clic en las áreas afectadas del paciente para registrar su evolución y síntomas asociados. Use el botón "Restablecer selección" para comenzar de nuevo.
+          <strong>Instrucciones:</strong> Haga clic en las áreas afectadas del paciente para registrar su evolución y síntomas asociados.
         </div>
         
-        <div id="anatomy-container" class="anatomy-container">
-          <div id="anatomy-image-container" class="anatomy-image-container">
+        <div class="anatomy-section">
+          <!-- Contenedor principal de anatomía -->
+          <div id="anatomy-container" class="anatomy-container">
             <img id="anatomy-image" src="img/anatomia-muscular.jpg" alt="Anatomía muscular" class="anatomy-image">
             <div id="anatomy-overlay" class="anatomy-overlay"></div>
+            <div id="markers-container" class="markers-container"></div>
           </div>
-          
-          <div class="affected-areas-section">
-            <h3>Áreas afectadas</h3>
-            <button id="reset-areas-btn" class="secondary-btn">Restablecer selección</button>
-            <div id="affected-areas-list"></div>
-          </div>
-          
-          <div class="area-detail-section">
-            <div id="area-detail-form" style="display: none;">
-              <h3>Detalle del área: <span id="current-area-name"></span></h3>
-              <div class="form-group">
-                <label for="area-severity">Severidad:</label>
-                <select id="area-severity" class="form-select">
-                  <option value="leve">Leve</option>
-                  <option value="moderada">Moderada</option>
-                  <option value="grave">Grave</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="area-evolution">Evolución:</label>
-                <select id="area-evolution" class="form-select">
-                  <option value="estable">Estable</option>
-                  <option value="mejoria">Mejoría</option>
-                  <option value="empeoramiento">Empeoramiento</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="area-start-date">Inicio de síntomas:</label>
-                <input type="date" id="area-start-date" class="form-input">
-              </div>
-              <div class="form-group">
-                <label for="area-impact">Impacto funcional:</label>
-                <select id="area-impact" class="form-select">
-                  <option value="ninguno">Ninguno</option>
-                  <option value="leve">Leve</option>
-                  <option value="moderado">Moderado</option>
-                  <option value="grave">Grave</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="area-interventions">Intervenciones:</label>
-                <select id="area-interventions" class="form-select" multiple>
-                  <option value="fisioterapia">Fisioterapia</option>
-                  <option value="terapia-ocupacional">Terapia ocupacional</option>
-                  <option value="logopedia">Logopedia</option>
-                  <option value="hidroterapia">Hidroterapia</option>
-                  <option value="ortesis">Ortesis</option>
-                  <option value="farmacologico">Tratamiento farmacológico</option>
-                  <option value="observacion">Observación</option>
-                </select>
-                <small>Mantenga presionada la tecla Ctrl para seleccionar múltiples opciones</small>
-              </div>
-              <div class="form-actions">
-                <button id="btn-save-area" class="primary-btn">Guardar</button>
-                <button id="btn-cancel-area" class="secondary-btn">Cancelar</button>
-              </div>
+
+          <!-- Formulario de detalles del área -->
+          <div id="area-detail-form" class="area-detail-form">
+            <h4>Nueva área</h4>
+            
+            <div class="form-group">
+              <label for="area-severity">Severidad:</label>
+              <select id="area-severity" class="form-input" required>
+                <option value="leve">Leve</option>
+                <option value="moderada">Moderada</option>
+                <option value="grave">Grave</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="area-evolution">Evolución:</label>
+              <select id="area-evolution" class="form-input" required>
+                <option value="estable">Estable</option>
+                <option value="mejorando">Mejorando</option>
+                <option value="empeorando">Empeorando</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="area-start-date">Fecha de inicio:</label>
+              <input type="date" id="area-start-date" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label for="area-impact">Impacto funcional:</label>
+              <select id="area-impact" class="form-input" required>
+                <option value="ninguno">Ninguno</option>
+                <option value="leve">Leve</option>
+                <option value="moderado">Moderado</option>
+                <option value="severo">Severo</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="area-interventions">Intervenciones:</label>
+              <select id="area-interventions" class="form-input" multiple>
+                <option value="fisioterapia">Fisioterapia</option>
+                <option value="terapia-ocupacional">Terapia ocupacional</option>
+                <option value="logopedia">Logopedia</option>
+                <option value="hidroterapia">Hidroterapia</option>
+                <option value="ortesis">Ortesis</option>
+                <option value="farmacologico">Tratamiento farmacológico</option>
+                <option value="observacion">Observación</option>
+              </select>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="btn-save-area" class="primary-btn">Guardar</button>
+              <button type="button" id="btn-cancel-area" class="secondary-btn">Cancelar</button>
             </div>
           </div>
         </div>
@@ -422,7 +434,7 @@
             <div class="respiratorio-section">
               <h3>Evaluación respiratoria actual</h3>
               
-              <fieldset>
+              <fieldset class="capacidad-ventilatoria">
                 <legend>Capacidad ventilatoria</legend>
                 <div class="form-group">
                   <label for="capacidad-vital-forzada">Capacidad Vital Forzada (CVF):</label>
@@ -452,39 +464,22 @@
                 <div class="form-group">
                   <label for="saturacion-oxigeno">Saturación de Oxígeno en reposo:</label>
                   <div class="input-group">
-                    <input type="number" id="saturacion-oxigeno" class="form-input" min="70" max="100" step="1" placeholder="70-100">
+                    <input type="number" id="saturacion-oxigeno" class="form-input" min="70" max="100" step="0.1" placeholder="70-100">
                     <span class="input-group-text">%</span>
                   </div>
                 </div>
-              </fieldset>
-              
-              <fieldset>
-                <legend>Síntomas respiratorios</legend>
-                <div class="option-container">
-                  <label><input type="checkbox" name="sintomas-respiratorios" value="disnea"> Disnea</label>
-                </div>
-                <div class="option-container">
-                  <label><input type="checkbox" name="sintomas-respiratorios" value="ortopnea"> Ortopnea</label>
-                </div>
-                <div class="option-container">
-                  <label><input type="checkbox" name="sintomas-respiratorios" value="disnea-nocturna"> Disnea nocturna</label>
-                </div>
-                <div class="option-container">
-                  <label><input type="checkbox" name="sintomas-respiratorios" value="hipoventilacion"> Hipoventilación</label>
-                </div>
-                <div class="option-container">
-                  <label><input type="checkbox" name="sintomas-respiratorios" value="fatiga"> Fatiga</label>
-                </div>
-                <div class="option-container">
-                  <label><input type="checkbox" name="sintomas-respiratorios" value="debilidad-tos"> Debilidad para toser</label>
-                </div>
-                <div class="option-container">
-                  <label><input type="checkbox" name="sintomas-respiratorios" value="cefalea-matutina"> Cefalea matutina</label>
-                </div>
-                <div class="option-container">
-                  <label><input type="checkbox" name="sintomas-respiratorios" value="somnolencia-diurna"> Somnolencia diurna</label>
+
+                <div class="chart-button-container">
+                  <button type="button" id="generar-grafico-btn" class="primary-btn">
+                    <i class="fas fa-chart-bar"></i> Generar Gráfico de Parámetros
+                  </button>
                 </div>
               </fieldset>
+
+              <div id="respiratory-visualization-section">
+                <div id="respiratory-chart-container" style="display: none;"></div>
+                <div id="respiratory-feedback" style="display: none;"></div>
+              </div>
             </div>
             
             <!-- Segunda columna: Dispositivos en uso -->
@@ -685,9 +680,5 @@
   
   <!-- Fin del contenedor principal -->
   </div>
-  
-  <!-- Inclusión de bibliotecas necesarias desde CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html> 
