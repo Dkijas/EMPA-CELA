@@ -10,6 +10,9 @@ const EMPA_PROGRESSION = {
     // Datos para el gráfico de progresión
     chartData: [],
     
+    // Áreas seleccionadas
+    selectedAreas: [],
+    
     // Inicializa el módulo de progresión
     init: function() {
         console.log('Inicializando módulo de progresión...');
@@ -543,16 +546,24 @@ const EMPA_PROGRESSION = {
             // Verificar la existencia de las áreas seleccionadas
             let areasSeleccionadas = [];
             
-            // Intentar obtener las áreas desde el módulo EMPA
-            if (typeof EMPA !== 'undefined' && EMPA.selectedAreas) {
-                areasSeleccionadas = EMPA.selectedAreas;
-                console.log('Áreas obtenidas desde EMPA:', areasSeleccionadas.length);
-            } 
-            // Intentar obtener las áreas desde EMPA_ANATOMY
+            // Si el módulo tiene directamente las áreas seleccionadas (prioritario)
+            if (this.selectedAreas && this.selectedAreas.length > 0) {
+                areasSeleccionadas = this.selectedAreas;
+                console.log('Áreas obtenidas directamente del módulo PROGRESSION:', areasSeleccionadas.length);
+            }
+            // Intentar obtener las áreas desde el módulo EMPA_ANATOMY (segunda opción)
             else if (typeof EMPA_ANATOMY !== 'undefined' && EMPA_ANATOMY.selectedAreas) {
                 areasSeleccionadas = EMPA_ANATOMY.selectedAreas;
                 console.log('Áreas obtenidas desde EMPA_ANATOMY:', areasSeleccionadas.length);
             }
+            // Intentar obtener las áreas desde el módulo EMPA (tercera opción)
+            else if (typeof EMPA !== 'undefined' && EMPA.selectedAreas) {
+                areasSeleccionadas = EMPA.selectedAreas;
+                console.log('Áreas obtenidas desde EMPA:', areasSeleccionadas.length);
+            }
+            
+            // Guardar las áreas para tenerlas disponibles más adelante
+            this.selectedAreas = areasSeleccionadas;
             
             // Verificar si hay áreas seleccionadas
             if (!areasSeleccionadas || areasSeleccionadas.length === 0) {
@@ -574,9 +585,12 @@ const EMPA_PROGRESSION = {
                 areas: areasSeleccionadas.map(area => ({
                     name: area.name || 'Área personalizada',
                     severity: area.severity || 'leve',
-                    evolution: area.evolution || 'estable'
+                    evolution: area.evolution || 'estable',
+                    coordinates: area.coordinates // Incluir coordenadas para poder identificar el área
                 }))
             };
+            
+            console.log('Datos preparados para el gráfico:', currentData);
             
             // Si no hay datos previos, inicializar con los datos actuales
             if (!this.chartData || this.chartData.length === 0) {
@@ -604,7 +618,12 @@ const EMPA_PROGRESSION = {
                 }
             }
             
-            console.log('Datos de progresión actualizados:', this.chartData);
+            console.log('Datos de progresión actualizados:', this.chartData.length, 'puntos de tiempo');
+            
+            // Limpiar el contenedor antes de actualizar
+            if (this.elements.progressionChart) {
+                this.elements.progressionChart.innerHTML = '';
+            }
             
             // Actualizar el gráfico
             this.createProgressionChart();
@@ -612,7 +631,7 @@ const EMPA_PROGRESSION = {
             console.error('Error al obtener datos de progresión:', error);
             // Intentar mostrar un mensaje de error si el elemento está disponible
             if (this.elements.progressionChart) {
-                this.elements.progressionChart.innerHTML = '<div class="empty-chart-message">Error al procesar los datos de progresión.</div>';
+                this.elements.progressionChart.innerHTML = '<div class="empty-chart-message">Error al procesar los datos de progresión: ' + error.message + '</div>';
             }
         }
     },
