@@ -225,19 +225,26 @@ function calculateScore() {
 
 // Función global para generar PDF
 function generatePDF() {
-    console.log('Generando PDF...');
+    console.log('Generando PDF completo...');
     
-    if (typeof EMPA_CALCULATION === 'undefined') {
-        console.error('El módulo de cálculo no está disponible');
-        alert('No se puede generar el PDF porque el módulo de cálculo no está disponible');
+    if (typeof EMPA_PDF === 'undefined') {
+        console.error('El módulo de PDF no está disponible');
+        alert('No se puede generar el PDF porque el módulo necesario no está disponible');
         return;
     }
     
     try {
+        // Primero calcular la puntuación para asegurar que tenemos datos actualizados
         const resultData = EMPA_CALCULATION.calculateScore();
-        // Aquí llamaríamos a la función para generar PDF con los datos
-        // Temporalmente, mostramos un mensaje
-        alert('Funcionalidad de PDF en desarrollo');
+        
+        // Generar el PDF completo con todos los datos
+        const success = EMPA_PDF.generateReport();
+        
+        if (success) {
+            console.log('PDF generado correctamente');
+        } else {
+            console.error('Error al generar el PDF');
+        }
     } catch (error) {
         console.error('Error al generar PDF:', error);
         alert('Ha ocurrido un error al generar el PDF: ' + error.message);
@@ -248,17 +255,24 @@ function generatePDF() {
 function generateSimplePDF() {
     console.log('Generando PDF simplificado...');
     
-    if (typeof EMPA_CALCULATION === 'undefined') {
-        console.error('El módulo de cálculo no está disponible');
-        alert('No se puede generar el PDF porque el módulo de cálculo no está disponible');
+    if (typeof EMPA_PDF === 'undefined') {
+        console.error('El módulo de PDF no está disponible');
+        alert('No se puede generar el PDF porque el módulo necesario no está disponible');
         return;
     }
     
     try {
+        // Primero calcular la puntuación para asegurar que tenemos datos actualizados
         const resultData = EMPA_CALCULATION.calculateScore();
-        // Aquí llamaríamos a la función para generar PDF simplificado con los datos
-        // Temporalmente, mostramos un mensaje
-        alert('Funcionalidad de PDF simplificado en desarrollo');
+        
+        // Generar el PDF simplificado (sólo con datos básicos y la puntuación)
+        const success = EMPA_PDF.generateSimpleReport();
+        
+        if (success) {
+            console.log('PDF simplificado generado correctamente');
+        } else {
+            console.error('Error al generar el PDF simplificado');
+        }
     } catch (error) {
         console.error('Error al generar PDF simplificado:', error);
         alert('Ha ocurrido un error al generar el PDF simplificado: ' + error.message);
