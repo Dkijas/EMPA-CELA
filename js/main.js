@@ -91,36 +91,56 @@ function setupGlobalButtons() {
     }
 }
 
-// Inicializar módulos específicos
+/**
+ * Inicializa todos los módulos disponibles
+ */
 function initializeModules() {
-    // Inicializar el módulo de anatomía
-    if (typeof EMPA_ANATOMY !== 'undefined') {
-        setTimeout(function() {
-            console.log('Inicializando módulo de anatomía desde main.js...');
+    console.log('Inicializando módulos EMPA-CELA...');
+    
+    // Inicialización de módulos
+    try {
+        // Verificar y inicializar módulo principal
+        if (typeof EMPA !== 'undefined') {
+            EMPA.init();
+            console.log('Módulo principal EMPA inicializado');
+        } else {
+            console.warn('Módulo principal EMPA no disponible');
+        }
+        
+        // Verificar e inicializar módulo de anatomía
+        if (typeof EMPA_ANATOMY !== 'undefined') {
             EMPA_ANATOMY.init();
-        }, 500);
-    } else {
-        console.error('El módulo de anatomía no está disponible');
-    }
-    
-    // Inicializar el módulo de progresión
-    if (typeof EMPA_PROGRESSION !== 'undefined') {
-        setTimeout(function() {
-            console.log('Inicializando módulo de progresión desde main.js...');
-            EMPA_PROGRESSION.init();
-        }, 600);
-    } else {
-        console.error('El módulo de progresión no está disponible');
-    }
-    
-    // Inicializar el módulo de cálculo
-    if (typeof EMPA_CALCULATION !== 'undefined') {
-        setTimeout(function() {
-            console.log('Inicializando módulo de cálculo desde main.js...');
+            console.log('Módulo de anatomía inicializado');
+        } else {
+            console.warn('Módulo de anatomía no disponible');
+        }
+        
+        // Verificar e inicializar módulo de cálculo
+        if (typeof EMPA_CALCULATION !== 'undefined') {
             EMPA_CALCULATION.init();
-        }, 400);
-    } else {
-        console.error('El módulo de cálculo no está disponible');
+            console.log('Módulo de cálculo inicializado');
+        } else {
+            console.warn('Módulo de cálculo no disponible');
+        }
+        
+        // Verificar e inicializar módulo de PDF
+        if (typeof EMPA_PDF !== 'undefined') {
+            EMPA_PDF.init();
+            console.log('Módulo de PDF inicializado');
+        } else {
+            console.warn('Módulo de PDF no disponible');
+        }
+        
+        // Verificar e inicializar módulo respiratorio
+        if (typeof EMPA_RESPIRATORY !== 'undefined') {
+            EMPA_RESPIRATORY.initialize();
+            console.log('Módulo respiratorio inicializado');
+        } else {
+            console.warn('Módulo respiratorio no disponible');
+        }
+        
+    } catch (error) {
+        console.error('Error al inicializar módulos:', error);
     }
 }
 

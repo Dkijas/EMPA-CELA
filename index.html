@@ -13,6 +13,7 @@
   <script src="js/modules/progression.js"></script>
   <script src="js/modules/calculation.js"></script>
   <script src="js/modules/pdf.js"></script>
+  <script src="js/modules/respiratory.js"></script>
   <script src="js/main.js"></script>
 </head>
 <body>
@@ -30,6 +31,7 @@
       <div class="tabs">
         <button class="tab-btn active" data-tab="escala-tab">Escala EMPA-CELA</button>
         <button class="tab-btn" data-tab="anatomia-tab">Anatomía de Enfermedad</button>
+        <button class="tab-btn" data-tab="respiratorio-tab">Soporte Respiratorio</button>
       </div>
     </div>
     
@@ -327,75 +329,59 @@
         </form>
       </div>
       
-      <!-- Pestaña de Anatomía de Enfermedad -->
+      <!-- Pestaña de Anatomía de la Enfermedad -->
       <div id="anatomia-tab" class="tab-pane">
         <div class="info-panel">
-          <strong>Instrucciones:</strong> Haga clic en las áreas afectadas del paciente para registrar su evolución y los síntomas asociados.
-        </div>
-        
-        <div id="anatomy-controls" class="controls-container">
-          <button id="btn-reset-anatomy" class="secondary-btn">Reiniciar selección</button>
+          <strong>Instrucciones:</strong> Haga clic en las áreas afectadas del paciente para registrar su evolución y síntomas asociados. Use el botón "Restablecer selección" para comenzar de nuevo.
         </div>
         
         <div id="anatomy-container" class="anatomy-container">
-          <div class="anatomy-side">
-            <div id="anatomy-image-container" class="anatomy-image-container">
-              <img id="anatomy-image" src="img/anatomia-muscular.jpg" alt="Figura Anatómica" />
-              <div id="anatomy-overlay" class="anatomy-overlay"></div>
-            </div>
+          <div id="anatomy-image-container" class="anatomy-image-container">
+            <img id="anatomy-image" src="img/anatomia-muscular.jpg" alt="Anatomía muscular" class="anatomy-image">
+            <div id="anatomy-overlay" class="anatomy-overlay"></div>
           </div>
           
-          <div class="anatomy-side">
-            <div id="selected-areas-container">
-              <h3>Áreas afectadas:</h3>
-              <div id="selected-areas-list">
-                <p class="text-muted">No hay áreas seleccionadas</p>
-              </div>
-            </div>
-            
-            <div id="area-details-form" class="area-details" style="display: none;">
-              <h3 id="area-form-title">Detalles del área</h3>
-              <div class="form-group" id="custom-name-container">
-                <label for="custom-area-name">Nombre personalizado:</label>
-                <input type="text" id="custom-area-name" class="form-input" placeholder="Ej: Musculatura cervical">
-              </div>
+          <div class="affected-areas-section">
+            <h3>Áreas afectadas</h3>
+            <button id="reset-areas-btn" class="secondary-btn">Restablecer selección</button>
+            <div id="affected-areas-list"></div>
+          </div>
+          
+          <div class="area-detail-section">
+            <div id="area-detail-form" style="display: none;">
+              <h3>Detalle del área: <span id="current-area-name"></span></h3>
               <div class="form-group">
-                <label>Categoría: <span id="area-category">Personalizada</span></label>
-                <p>Área: <span id="area-name">Personalizada</span></p>
-              </div>
-              <div class="form-group">
-                <label for="severity-level">Nivel de severidad:</label>
-                <select id="severity-level" class="form-input">
+                <label for="area-severity">Severidad:</label>
+                <select id="area-severity" class="form-select">
                   <option value="leve">Leve</option>
                   <option value="moderada">Moderada</option>
                   <option value="grave">Grave</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="evolution-level">Evolución:</label>
-                <select id="evolution-level" class="form-input">
+                <label for="area-evolution">Evolución:</label>
+                <select id="area-evolution" class="form-select">
                   <option value="estable">Estable</option>
                   <option value="mejoria">Mejoría</option>
                   <option value="empeoramiento">Empeoramiento</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="symptom-start-date">Inicio de síntomas:</label>
-                <input type="date" id="symptom-start-date" class="form-input">
+                <label for="area-start-date">Inicio de síntomas:</label>
+                <input type="date" id="area-start-date" class="form-input">
               </div>
               <div class="form-group">
-                <label for="functional-impact">Impacto funcional:</label>
-                <select id="functional-impact" class="form-input">
-                  <option value="sin-impacto">Sin impacto funcional</option>
-                  <option value="impacto-leve">Impacto leve</option>
-                  <option value="impacto-moderado">Impacto moderado</option>
-                  <option value="impacto-severo">Impacto severo - Requiere asistencia</option>
-                  <option value="perdida-completa">Pérdida completa de la función</option>
+                <label for="area-impact">Impacto funcional:</label>
+                <select id="area-impact" class="form-select">
+                  <option value="ninguno">Ninguno</option>
+                  <option value="leve">Leve</option>
+                  <option value="moderado">Moderado</option>
+                  <option value="grave">Grave</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="intervention">Intervenciones:</label>
-                <select id="intervention" class="form-input" multiple size="3">
+                <label for="area-interventions">Intervenciones:</label>
+                <select id="area-interventions" class="form-select" multiple>
                   <option value="fisioterapia">Fisioterapia</option>
                   <option value="terapia-ocupacional">Terapia ocupacional</option>
                   <option value="logopedia">Logopedia</option>
@@ -419,6 +405,235 @@
           <h3>Evolución temporal de la enfermedad</h3>
           <div id="progression-chart" class="progression-chart"></div>
         </div>
+      </div>
+      
+      <!-- Pestaña de Soporte Respiratorio -->
+      <div id="respiratorio-tab" class="tab-pane">
+        <div class="info-panel">
+          <strong>Instrucciones:</strong> Evalúe los dispositivos de soporte vital respiratorio que utiliza el paciente y aquellos que podrían estar indicados en su caso.
+        </div>
+        
+        <form id="soporte-respiratorio-form">
+          <div class="respiratorio-container">
+            <!-- Primera columna: Evaluación respiratoria actual -->
+            <div class="respiratorio-section">
+              <h3>Evaluación respiratoria actual</h3>
+              
+              <fieldset>
+                <legend>Capacidad ventilatoria</legend>
+                <div class="form-group">
+                  <label for="capacidad-vital-forzada">Capacidad Vital Forzada (CVF):</label>
+                  <div class="input-group">
+                    <input type="number" id="capacidad-vital-forzada" class="form-input" min="0" max="100" step="0.1" placeholder="0-100">
+                    <span class="input-group-text">%</span>
+                  </div>
+                  <small>Porcentaje del valor predicho</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="presion-inspiratoria">Presión Inspiratoria Máxima (PIM):</label>
+                  <div class="input-group">
+                    <input type="number" id="presion-inspiratoria" class="form-input" min="0" max="150" step="1" placeholder="0-150">
+                    <span class="input-group-text">cmH₂O</span>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="presion-espiratoria">Presión Espiratoria Máxima (PEM):</label>
+                  <div class="input-group">
+                    <input type="number" id="presion-espiratoria" class="form-input" min="0" max="150" step="1" placeholder="0-150">
+                    <span class="input-group-text">cmH₂O</span>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="saturacion-oxigeno">Saturación de Oxígeno en reposo:</label>
+                  <div class="input-group">
+                    <input type="number" id="saturacion-oxigeno" class="form-input" min="70" max="100" step="1" placeholder="70-100">
+                    <span class="input-group-text">%</span>
+                  </div>
+                </div>
+              </fieldset>
+              
+              <fieldset>
+                <legend>Síntomas respiratorios</legend>
+                <div class="option-container">
+                  <label><input type="checkbox" name="sintomas-respiratorios" value="disnea"> Disnea</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="sintomas-respiratorios" value="ortopnea"> Ortopnea</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="sintomas-respiratorios" value="disnea-nocturna"> Disnea nocturna</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="sintomas-respiratorios" value="hipoventilacion"> Hipoventilación</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="sintomas-respiratorios" value="fatiga"> Fatiga</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="sintomas-respiratorios" value="debilidad-tos"> Debilidad para toser</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="sintomas-respiratorios" value="cefalea-matutina"> Cefalea matutina</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="sintomas-respiratorios" value="somnolencia-diurna"> Somnolencia diurna</label>
+                </div>
+              </fieldset>
+            </div>
+            
+            <!-- Segunda columna: Dispositivos en uso -->
+            <div class="respiratorio-section">
+              <h3>Dispositivos de soporte en uso</h3>
+              
+              <fieldset>
+                <legend>Soporte ventilatorio no invasivo</legend>
+                <div class="form-group">
+                  <label><input type="checkbox" id="uso-vmni"> Ventilación Mecánica No Invasiva (VMNI)</label>
+                </div>
+                
+                <div class="subform" id="vmni-details" style="display: none; margin-left: 20px;">
+                  <div class="form-group">
+                    <label for="tipo-vmni">Tipo:</label>
+                    <select id="tipo-vmni" class="form-select">
+                      <option value="bipap">BiPAP</option>
+                      <option value="cpap">CPAP</option>
+                      <option value="otro-vmni">Otro</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="horas-vmni">Horas de uso diario:</label>
+                    <div class="input-group">
+                      <input type="number" id="horas-vmni" class="form-input" min="0" max="24" step="0.5" placeholder="0-24">
+                      <span class="input-group-text">h/día</span>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="inicio-vmni">Fecha de inicio:</label>
+                    <input type="date" id="inicio-vmni" class="form-input">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>Períodos de uso:</label>
+                    <div class="option-container">
+                      <label><input type="checkbox" name="periodos-vmni" value="nocturno"> Nocturno</label>
+                    </div>
+                    <div class="option-container">
+                      <label><input type="checkbox" name="periodos-vmni" value="diurno"> Diurno</label>
+                    </div>
+                    <div class="option-container">
+                      <label><input type="checkbox" name="periodos-vmni" value="continuo"> Continuo</label>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              
+              <fieldset>
+                <legend>Soporte ventilatorio invasivo</legend>
+                <div class="form-group">
+                  <label><input type="checkbox" id="uso-vmi"> Ventilación Mecánica Invasiva (VMI)</label>
+                </div>
+                
+                <div class="subform" id="vmi-details" style="display: none; margin-left: 20px;">
+                  <div class="form-group">
+                    <label for="tipo-vmi">Tipo:</label>
+                    <select id="tipo-vmi" class="form-select">
+                      <option value="traq-permanente">Traqueostomía permanente</option>
+                      <option value="traq-intermitente">Traqueostomía con ventilación intermitente</option>
+                      <option value="otro-vmi">Otro</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="inicio-vmi">Fecha de inicio:</label>
+                    <input type="date" id="inicio-vmi" class="form-input">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="dependencia-vmi">Grado de dependencia:</label>
+                    <select id="dependencia-vmi" class="form-select">
+                      <option value="total">Total (24h/día)</option>
+                      <option value="alta">Alta (16-23h/día)</option>
+                      <option value="media">Media (8-16h/día)</option>
+                      <option value="baja">Baja (&lt;8h/día)</option>
+                    </select>
+                  </div>
+                </div>
+              </fieldset>
+              
+              <fieldset>
+                <legend>Otros dispositivos respiratorios</legend>
+                <div class="option-container">
+                  <label><input type="checkbox" name="otros-dispositivos" value="asistente-tos"> Asistente de tos (Cough Assist)</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="otros-dispositivos" value="aspirador"> Aspirador de secreciones</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="otros-dispositivos" value="oxigenoterapia"> Oxigenoterapia domiciliaria</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="otros-dispositivos" value="apnea"> Dispositivo para apnea del sueño</label>
+                </div>
+              </fieldset>
+            </div>
+            
+            <!-- Tercera columna: Dispositivos indicados -->
+            <div class="respiratorio-section">
+              <h3>Dispositivos indicados (no en uso)</h3>
+              
+              <fieldset>
+                <legend>Dispositivos recomendados</legend>
+                <div class="info-panel">
+                  Seleccione los dispositivos que están indicados pero que el paciente aún no utiliza.
+                </div>
+                
+                <div class="option-container">
+                  <label><input type="checkbox" name="dispositivos-indicados" value="vmni"> Ventilación Mecánica No Invasiva</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="dispositivos-indicados" value="vmi"> Ventilación Mecánica Invasiva</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="dispositivos-indicados" value="asistente-tos"> Asistente de tos</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="dispositivos-indicados" value="aspirador"> Aspirador de secreciones</label>
+                </div>
+                <div class="option-container">
+                  <label><input type="checkbox" name="dispositivos-indicados" value="oxigenoterapia"> Oxigenoterapia</label>
+                </div>
+                
+                <div class="form-group">
+                  <label for="motivo-no-uso">Motivo principal de no utilización:</label>
+                  <select id="motivo-no-uso" class="form-select">
+                    <option value="">Seleccione una razón</option>
+                    <option value="en-tramite">En trámite/pendiente</option>
+                    <option value="rechazo">Rechazo del paciente</option>
+                    <option value="contraindicacion">Contraindicación médica</option>
+                    <option value="no-disponible">No disponible en su área</option>
+                    <option value="economico">Factores económicos</option>
+                    <option value="otro">Otro motivo</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="notas-dispositivos">Observaciones:</label>
+                  <textarea id="notas-dispositivos" class="form-textarea" rows="4" placeholder="Añada información relevante sobre los dispositivos indicados..."></textarea>
+                </div>
+              </fieldset>
+              
+              <div class="form-actions">
+                <button type="button" id="guardar-respiratorio" class="primary-btn">Guardar Evaluación</button>
+                <button type="button" id="cancelar-respiratorio" class="secondary-btn">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
     
