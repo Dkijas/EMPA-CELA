@@ -1,96 +1,165 @@
 # Escala EMPA-CELA
 
 ## Descripción
-La Escala EMPA-CELA (Evaluación Médica de Priorización de Atención - Clasificación de Emergencias y Listas de Atención) es una herramienta interactiva diseñada para ayudar a los profesionales de la salud a evaluar y priorizar la atención médica de pacientes en servicios de urgencias y emergencias.
+La Escala EMPA-CELA (Evaluación Médica de Priorización de Atención - Clasificación de Emergencias y Listas de Atención) es una herramienta interactiva diseñada para ayudar a los profesionales de la salud a evaluar y priorizar la atención médica de pacientes con Esclerosis Lateral Amiotrófica (ELA) en servicios de atención especializada.
 
 ## ⚠️ AVISO IMPORTANTE - EXENCIÓN DE RESPONSABILIDAD ⚠️
-**Esta escala NO ha sido validada clínicamente.** No se asume responsabilidad de ningún tipo por su uso. Los resultados proporcionados por esta herramienta son meramente orientativos y no deben utilizarse como única herramienta para tomar decisiones clínicas. Consulte siempre con profesionales sanitarios cualificados. Los autores de esta escala no se hacen responsables de decisiones tomadas con base en los resultados obtenidos.
+**Esta escala NO ha sido validada clínicamente.** No se asume responsabilidad de ningún tipo por su uso. Los resultados proporcionados por esta herramienta son meramente orientativos y no deben utilizarse como única herramienta para tomar decisiones clínicas. Consulte siempre con profesionales sanitarios cualificados.
 
-## Características
-- Interfaz intuitiva y fácil de usar
-- Evaluación de función motora 
-- Evaluación de función bulbar
-- Evaluación de función cognitiva y conductual
-- Evaluación de apoyo y situación social
-- Evaluación de comorbilidades
-- Evaluación de necesidad de supervisión de enfermería
-- Evaluación de la aceptación de cuidados
-- Cálculo automático de prioridad de atención
-- Impresión de resultados
-- Diseño responsivo para usar en dispositivos móviles o de escritorio
+## Características Principales
+- Interfaz moderna e intuitiva con sistema de pestañas
+- Evaluación multidimensional completa
+- Visualización anatómica interactiva
+- Seguimiento temporal de la evolución
+- Evaluación respiratoria detallada
+- Generación de informes en PDF (completo y simplificado)
+- Almacenamiento local de datos
+- Diseño responsivo para dispositivos móviles y escritorio
 
-## Funcionamiento
-La escala EMPA-CELA se basa en la evaluación de los siguientes parámetros:
-1. Función motora (0-7 puntos)
+## Módulos del Sistema
+
+### 1. Evaluación EMPA-CELA
+Evaluación completa basada en los siguientes parámetros:
+1. **Función motora** (0-7 puntos)
    - Movilidad funcional
    - Movilidad fina
    - Resistencia y fatiga
-2. Función bulbar (0-6 puntos) 
+2. **Función bulbar** (0-6 puntos) 
    - Capacidad de habla y comunicación
    - Uso de dispositivos de comunicación
-3. Función cognitiva y conductual (0-6 puntos)
+3. **Función cognitiva y conductual** (0-6 puntos)
    - Atención y concentración
    - Memoria
    - Lenguaje y fluidez verbal
-4. Apoyo y situación social (0-6 puntos)
+4. **Apoyo y situación social** (0-6 puntos)
    - Apoyo familiar y sobrecarga del cuidador
    - Situación económica
    - Acceso y tramitación de ayudas estatales
-5. Comorbilidades y estado general de salud (0-5 puntos)
-6. Supervisión de enfermería y cuidados (0-3 puntos)
-7. Aceptación de cuidados y modalidad de atención (0-4 puntos)
+5. **Comorbilidades y estado general** (0-5 puntos)
+6. **Supervisión de enfermería** (0-3 puntos)
+7. **Aceptación de cuidados** (0-4 puntos)
 
-Cada parámetro se evalúa con una puntuación específica, donde los valores más bajos (0) indican mejor estado o menor necesidad de intervención, y los valores más altos indican mayor gravedad o necesidad de atención.
+### 2. Anatomía de la Enfermedad
+- Mapa anatómico interactivo
+- Marcadores de afectación por zonas
+- Registro de severidad (leve, moderada, grave)
+- Seguimiento de evolución temporal
+- Visualización gráfica de progresión
 
-El sistema calcula la suma de todos los valores seleccionados (rango total: 0-37 puntos) y asigna una prioridad:
-- Prioridad 1 (Cuidados paliativos intensivos): Puntuación 15-37
-- Prioridad 2 (Atención intensiva especializada): Puntuación 11-14
-- Prioridad 3 (Atención intermedia): Puntuación 7-10
-- Prioridad 4 (Atención preventiva): Puntuación 4-6
-- Prioridad 5 (Diagnóstico reciente y autonomía plena): Puntuación 0-3
+### 3. Soporte Respiratorio
+- Evaluación de parámetros ventilatorios:
+  - Capacidad Vital Forzada (CVF)
+  - Presión Inspiratoria Máxima (PIM)
+  - Presión Espiratoria Máxima (PEM)
+  - Saturación de Oxígeno
+- Visualización gráfica de parámetros
+- Registro de dispositivos de soporte
+- Seguimiento de evolución respiratoria
 
-## Instalación
-No requiere instalación. El sistema funciona en cualquier navegador web moderno.
+## Niveles de Prioridad
+El sistema calcula la suma total (0-37 puntos) y asigna una prioridad:
 
-## Uso
-1. Abra el archivo `index.html` en su navegador
-2. Complete el formulario seleccionando los valores apropiados para cada parámetro
-3. Haga clic en "Calcular Prioridad"
-4. Revise el resultado mostrado
-5. Si es necesario, imprima los resultados con el botón "Guardar en PDF"
-6. Para iniciar una nueva evaluación, haga clic en "Restablecer Formulario"
+| Nivel | Puntuación | Clasificación | Seguimiento Recomendado |
+|-------|------------|---------------|------------------------|
+| 1 | 15-37 | Cuidados paliativos intensivos | Cada 1-2 semanas |
+| 2 | 11-14 | Atención intensiva especializada | Cada 2-3 semanas |
+| 3 | 7-10 | Atención intermedia | Mensual |
+| 4 | 4-6 | Atención preventiva | Cada 2-3 meses |
+| 5 | 0-3 | Seguimiento general | Semestral |
+
+## Recomendaciones por Nivel
+
+### Prioridad 1 (15-37 puntos)
+- Seguimiento médico frecuente (1-2 semanas)
+- Evaluación para ventilación mecánica
+- Soporte nutricional especializado
+- Apoyo psicológico intensivo
+- Coordinación con trabajo social
+
+### Prioridad 2 (11-14 puntos)
+- Seguimiento cada 2-3 semanas
+- Evaluación multidisciplinar completa
+- Ajuste de terapias físicas y respiratorias
+- Evaluación de comunicación aumentativa
+- Planificación anticipada de cuidados
+
+### Prioridad 3 (7-10 puntos)
+- Seguimiento mensual
+- Terapia física y ocupacional regular
+- Revisión de adaptaciones domiciliarias
+- Entrenamiento a cuidadores
+- Evaluación de necesidades sociales
+
+### Prioridad 4 (4-6 puntos)
+- Seguimiento cada 2-3 meses
+- Educación preventiva
+- Adaptaciones tempranas en el hogar
+- Asesoramiento sobre recursos
+- Programa de ejercicios personalizado
+
+### Prioridad 5 (0-3 puntos)
+- Seguimiento semestral
+- Monitorización de síntomas iniciales
+- Educación sobre la enfermedad
+- Exploración de soporte comunitario
+- Planificación de adaptaciones futuras
+
+## Uso del Sistema
+1. Acceda a la aplicación a través del navegador
+2. Complete los datos del paciente
+3. Realice la evaluación EMPA-CELA
+4. Marque las áreas anatómicas afectadas
+5. Registre los parámetros respiratorios
+6. Calcule la prioridad de atención
+7. Genere el informe en PDF según necesidad
 
 ## Estructura del Proyecto
-
 ```
 EMPA-CELA/
-├── index.html       # Página principal de la aplicación
+├── index.html                # Página principal de la aplicación
+├── LICENSE.txt              # Términos de licencia
 ├── css/
-│   └── styles.css   # Estilos CSS
+│   ├── styles.css          # Estilos globales
+│   └── modules/
+│       └── anatomy.css     # Estilos específicos de anatomía
 ├── js/
-│   ├── modules/     # Módulos JavaScript
-│   │   ├── core.js          # Funcionalidad principal y estado global
-│   │   ├── tabs.js          # Sistema de pestañas
-│   │   ├── anatomy.js       # Funcionalidad de sección de anatomía
-│   │   ├── progression.js   # Visualización de progresión
-│   │   ├── calculation.js   # Cálculos de puntuaciones
-│   │   └── pdf.js           # Generación de informes PDF
-│   └── main.js      # Inicialización de la aplicación
-└── img/
-    └── anatomy.png  # Imagen para la sección de anatomía
+│   ├── main.js            # Inicialización de la aplicación
+│   ├── utils/             # Utilidades generales
+│   │   ├── state.js      # Gestión de estado global
+│   │   ├── events.js     # Sistema de eventos
+│   │   └── storage.js    # Manejo de almacenamiento local
+│   └── modules/          # Módulos funcionales
+│       ├── anatomy/      # Módulo de anatomía
+│       ├── respiratory/  # Módulo respiratorio
+│       ├── pdf/         # Módulo de generación de PDF
+│       ├── core.js      # Funcionalidad principal
+│       ├── tabs.js      # Sistema de pestañas
+│       ├── calculation.js # Cálculos y puntuaciones
+│       ├── progression.js # Visualización de evolución
+│       ├── respiratory.js # Funcionalidad respiratoria
+│       └── pdf.js       # Generación de informes
+├── img/
+│   └── anatomia-muscular.jpg # Imagen base para anatomía
+└── Documentacion Clinica/    # Documentación médica y clínica
 ```
 
-## Tecnologías Utilizadas
-- HTML5
-- CSS3
-- JavaScript (ES6+)
+## Requisitos Técnicos
+- Navegador web moderno (Chrome, Firefox, Safari, Edge)
+- JavaScript habilitado
+- Conexión a Internet para CDN (opcional)
 
-## Derechos de Autor
-© 2025 Escala EMPA-CELA - Víctor Ramón Aguilera Díaz - Todos los derechos reservados.
+## Notas de Desarrollo
+- Desarrollado con JavaScript ES6+
+- Uso de módulos para mejor organización
+- Almacenamiento local para persistencia de datos
+- Diseño responsivo con CSS Grid y Flexbox
+- Generación de PDF con jsPDF
+- Visualizaciones con HTML5 Canvas
 
-Este proyecto está protegido por derechos de autor y se presenta a la comisión de derechos de autor como una herramienta original para la evaluación y priorización de atención médica.
+## Contacto y Soporte
+Para más información o soporte técnico:
+- **Autor**: Víctor Ramón Aguilera Díaz
+- **Email**: [victorramonaguileradiaz@gmail.com](mailto:victorramonaguileradiaz@gmail.com)
 
-## Contacto
-Para más información sobre este proyecto, por favor contacte al autor:
-
-Víctor Ramón Aguilera Díaz 
+## Licencia
+© 2025 Escala EMPA-CELA - Víctor Ramón Aguilera Díaz - Todos los derechos reservados. 
