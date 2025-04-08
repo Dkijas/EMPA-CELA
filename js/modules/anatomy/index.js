@@ -2,7 +2,6 @@
 class AnatomyModule {
     constructor() {
         this.initialized = false;
-        this.markerManager = null;
         this.elements = null;
         this.state = {
             areas: [],
@@ -28,11 +27,6 @@ class AnatomyModule {
             // Obtener elementos del DOM
             this.elements = this.getElements();
             
-            // Inicializar el gestor de marcadores
-            const container = this.elements.markerContainer;
-            console.log('Creando gestor de marcadores con contenedor:', container);
-            this.markerManager = new MarkerManager(container);
-
             // Configurar eventos
             this.setupEventListeners();
             
@@ -50,9 +44,9 @@ class AnatomyModule {
             image: document.querySelector('.anatomy-image'),
             overlay: document.querySelector('.anatomy-overlay'),
             markerContainer: document.querySelector('.marker-container'),
-            form: document.querySelector('#area-detail-form'),
-            saveButton: document.querySelector('#save-area-button'),
-            cancelButton: document.querySelector('#cancel-area-button')
+            form: document.getElementById('area-detail-form'),
+            saveButton: document.getElementById('btn-save-area'),
+            cancelButton: document.getElementById('btn-cancel-area')
         };
 
         // Verificar que todos los elementos existen
@@ -73,37 +67,78 @@ class AnatomyModule {
         // Evento de clic en el overlay
         this.elements.overlay.addEventListener('click', (e) => {
             if (!this.state.isEditing) {
-                const rect = e.target.getBoundingClientRect();
+                // Obtener coordenadas relativas al overlay
+                const rect = this.elements.overlay.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * 100;
                 const y = ((e.clientY - rect.top) / rect.height) * 100;
                 
-                console.log('Clic en overlay:', { x, y });
-                this.handleOverlayClick({ x, y });
+                // Guardar las coordenadas originales del clic
+                const clickCoordinates = { x, y };
+                console.log('Clic original en:', clickCoordinates);
+                
+                this.handleOverlayClick(clickCoordinates);
             }
         });
 
         // Eventos del formulario
         this.elements.form.addEventListener('submit', (e) => {
             e.preventDefault();
-            this.handleFormSubmit();
-        });
-
-        this.elements.cancelButton.addEventListener('click', () => {
-            this.handleFormCancel();
-        });
-
-        // Suscribirse a eventos del gestor de marcadores
-        EventBus.on('marker:selected', ({ index, area }) => {
-            console.log('Marcador seleccionado:', { index, area });
-            this.selectArea(index);
-        });
-
-        EventBus.on('marker:created', ({ coordinates, type, data }) => {
-            console.log('Marcador creado:', { coordinates, type, data });
-            if (type === 'temp') {
-                this.showAreaDetailsForm(coordinates);
+            console.log('Formulario enviado');
+            
+            // Usar las coordenadas originales guardadas en el marcador temporal
+            if (this.tempMarker) {
+                const coordinates = {
+                    x: parseFloat(this.tempMarker.style.left),
+                    y: parseFloat(this.tempMarker.style.top)
+                };
+                this.handleFormSubmit(coordinates);
+            } else {
+                console.error('No hay marcador temporal para guardar');
             }
         });
+        
+        this.elements.cancelButton.addEventListener('click', () => this.handleFormCancel());
+    }
+
+    calculateImageCoordinates(event) {
+        const image = this.elements.image;
+        const rect = image.getBoundingClientRect();
+        
+        // Obtener las dimensiones reales y escaladas de la imagen
+        const naturalRatio = image.naturalWidth / image.naturalHeight;
+        const containerRatio = rect.width / rect.height;
+        
+        let imageWidth, imageHeight, offsetX, offsetY;
+        
+        if (naturalRatio > containerRatio) {
+            // La imagen se ajusta al ancho
+            imageWidth = rect.width;
+            imageHeight = rect.width / naturalRatio;
+            offsetX = 0;
+            offsetY = (rect.height - imageHeight) / 2;
+        } else {
+            // La imagen se ajusta al alto
+            imageHeight = rect.height;
+            imageWidth = rect.height * naturalRatio;
+            offsetX = (rect.width - imageWidth) / 2;
+            offsetY = 0;
+        }
+
+        // Calcular las coordenadas relativas a la imagen real
+        const x = event.clientX - rect.left - offsetX;
+        const y = event.clientY - rect.top - offsetY;
+
+        // Verificar si el clic está dentro de la imagen
+        if (x < 0 || x > imageWidth || y < 0 || y > imageHeight) {
+            console.log('Clic fuera de la imagen');
+            return null;
+        }
+
+        // Convertir a porcentajes
+        return {
+            x: (x / imageWidth) * 100,
+            y: (y / imageHeight) * 100
+        };
     }
 
     handleOverlayClick(coordinates) {
@@ -113,48 +148,88 @@ class AnatomyModule {
         }
 
         try {
-            this.markerManager.createMarker(coordinates, 'temp');
+            // Crear marcador temporal
+            this.createTempMarker(coordinates);
+            
+            // Mostrar el formulario
+            this.showAreaDetailsForm(coordinates);
+            
+            // Actualizar estado
             this.state.isEditing = true;
+            console.log('Estado actualizado: isEditing = true');
         } catch (error) {
             console.error('Error al crear marcador temporal:', error);
         }
+    }
+
+    createTempMarker(coordinates) {
+        // Eliminar marcador temporal existente
+        if (this.tempMarker && this.tempMarker.parentNode) {
+            this.tempMarker.remove();
+        }
+
+        const marker = document.createElement('div');
+        marker.className = 'anatomy-marker temp-marker';
+        
+        // Guardar las coordenadas exactas como porcentajes
+        marker.style.left = `${coordinates.x}%`;
+        marker.style.top = `${coordinates.y}%`;
+        
+        this.elements.markerContainer.appendChild(marker);
+        this.tempMarker = marker;
+
+        console.log('Marcador temporal creado en:', coordinates);
     }
 
     showAreaDetailsForm(coordinates) {
         console.log('Mostrando formulario para coordenadas:', coordinates);
         
         const form = this.elements.form;
+        if (!form) {
+            console.error('Formulario no encontrado');
+            return;
+        }
+
+        // Guardar coordenadas exactas
+        form.dataset.tempX = coordinates.x.toString();
+        form.dataset.tempY = coordinates.y.toString();
+        
+        // Asegurar que el formulario esté visible y accesible
         form.style.display = 'block';
-        form.style.opacity = '1';
         form.style.visibility = 'visible';
+        form.style.opacity = '1';
+        form.style.zIndex = '1000';
         
-        // Limpiar campos del formulario
+        // Añadir clase visible para estilos adicionales
+        form.classList.add('visible');
+        
+        // Limpiar y enfocar
         form.reset();
-        
-        // Guardar coordenadas temporales
-        form.dataset.tempX = coordinates.x;
-        form.dataset.tempY = coordinates.y;
-        
-        // Asegurar que el formulario es visible
-        form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const firstInput = form.querySelector('select, input');
+        if (firstInput) {
+            firstInput.focus();
+        }
     }
 
-    handleFormSubmit() {
+    handleFormSubmit(coordinates) {
         const form = this.elements.form;
-        const coordinates = {
-            x: parseFloat(form.dataset.tempX),
-            y: parseFloat(form.dataset.tempY)
-        };
-
+        
+        // Usar las coordenadas exactas del marcador temporal
         const areaData = {
-            coordinates,
-            severity: form.querySelector('[name="severity"]').value,
-            evolution: form.querySelector('[name="evolution"]').value,
-            startDate: form.querySelector('[name="start-date"]').value,
-            impact: form.querySelector('[name="impact"]').value
+            name: form.querySelector('#area-name').value || 'Área personalizada',
+            coordinates: {
+                x: coordinates.x,
+                y: coordinates.y
+            },
+            severity: form.querySelector('#area-severity').value,
+            evolution: form.querySelector('#area-evolution').value,
+            startDate: form.querySelector('#area-start-date').value || new Date().toISOString().split('T')[0],
+            impact: form.querySelector('#area-impact').value,
+            interventions: Array.from(form.querySelector('#area-interventions').selectedOptions)
+                .map(option => option.value)
         };
 
-        console.log('Guardando área:', areaData);
+        console.log('Guardando área con datos:', areaData);
 
         if (this.state.selectedAreaIndex !== null) {
             // Actualizar área existente
@@ -164,8 +239,16 @@ class AnatomyModule {
             this.state.areas.push(areaData);
         }
 
-        this.updateAreas();
+        this.updateMarkers();
         this.resetForm();
+
+        // Notificar al módulo de progresión
+        if (typeof window.EMPA_PROGRESSION !== 'undefined') {
+            console.log('Notificando al módulo de progresión sobre nueva área');
+            window.EMPA_PROGRESSION.onAreasUpdated(this.getSelectedAreas());
+        } else {
+            console.warn('Módulo de progresión no encontrado');
+        }
     }
 
     handleFormCancel() {
@@ -175,13 +258,50 @@ class AnatomyModule {
 
     resetForm() {
         const form = this.elements.form;
-        form.style.display = 'none';
         form.reset();
+        
+        // Remover clase visible
+        form.classList.remove('visible');
+        
+        // Ocultar el formulario
+        form.style.display = 'none';
+        form.style.visibility = 'hidden';
+        form.style.opacity = '0';
         
         this.state.isEditing = false;
         this.state.selectedAreaIndex = null;
         
-        this.markerManager.removeTempMarker();
+        if (this.tempMarker) {
+            this.tempMarker.remove();
+            this.tempMarker = null;
+        }
+    }
+
+    updateMarkers() {
+        console.log('Actualizando marcadores:', this.state.areas);
+        
+        // Limpiar marcadores existentes
+        this.elements.markerContainer.innerHTML = '';
+        
+        // Crear nuevos marcadores
+        this.state.areas.forEach((area, index) => {
+            const marker = document.createElement('div');
+            marker.className = `anatomy-marker permanent-marker marker-${area.severity}`;
+            
+            // Usar las coordenadas exactas guardadas
+            marker.style.left = `${area.coordinates.x}%`;
+            marker.style.top = `${area.coordinates.y}%`;
+            marker.dataset.index = index;
+            
+            // Añadir evento de clic para edición
+            marker.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.selectArea(index);
+            });
+            
+            this.elements.markerContainer.appendChild(marker);
+            console.log('Marcador permanente creado en:', area.coordinates);
+        });
     }
 
     selectArea(index) {
@@ -198,25 +318,44 @@ class AnatomyModule {
 
         // Mostrar formulario con datos del área
         const form = this.elements.form;
-        form.querySelector('[name="severity"]').value = area.severity || '';
-        form.querySelector('[name="evolution"]').value = area.evolution || '';
-        form.querySelector('[name="start-date"]').value = area.startDate || '';
-        form.querySelector('[name="impact"]').value = area.impact || '';
+        form.querySelector('#area-severity').value = area.severity || '';
+        form.querySelector('#area-evolution').value = area.evolution || '';
+        form.querySelector('#area-start-date').value = area.startDate || '';
+        form.querySelector('#area-impact').value = area.impact || '';
 
-        form.dataset.tempX = area.coordinates.x;
-        form.dataset.tempY = area.coordinates.y;
+        // Seleccionar intervenciones
+        const interventionsSelect = form.querySelector('#area-interventions');
+        Array.from(interventionsSelect.options).forEach(option => {
+            option.selected = area.interventions?.includes(option.value) || false;
+        });
+
+        form.dataset.tempX = area.coordinates.x.toString();
+        form.dataset.tempY = area.coordinates.y.toString();
 
         this.showAreaDetailsForm(area.coordinates);
     }
 
-    updateAreas() {
-        console.log('Actualizando áreas:', this.state.areas);
-        this.markerManager.updateMarkers(this.state.areas);
+    // Método para obtener las áreas seleccionadas
+    getSelectedAreas() {
+        return this.state.areas.map(area => ({
+            name: area.name || 'Área personalizada',
+            severity: area.severity || 'leve',
+            evolution: area.evolution || 'estable',
+            coordinates: area.coordinates,
+            startDate: area.startDate || new Date().toISOString().split('T')[0]
+        }));
     }
 }
 
-// Crear e inicializar el módulo
-const anatomyModule = new AnatomyModule();
-anatomyModule.init().catch(error => {
-    console.error('Error al inicializar el módulo de anatomía:', error);
+// Exportar el módulo
+window.EMPA_ANATOMY = new AnatomyModule();
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    window.EMPA_ANATOMY.init().then(() => {
+        // Notificar al módulo de progresión después de inicializar
+        if (typeof window.EMPA_PROGRESSION !== 'undefined') {
+            window.EMPA_PROGRESSION.onAreasUpdated(window.EMPA_ANATOMY.getSelectedAreas());
+        }
+    });
 });

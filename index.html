@@ -347,69 +347,76 @@
           <strong>Instrucciones:</strong> Haga clic en las áreas afectadas del paciente para registrar su evolución y síntomas asociados.
         </div>
         
-        <div class="anatomy-section">
-          <!-- Contenedor principal de anatomía -->
-          <div id="anatomy-container" class="anatomy-container">
-            <img id="anatomy-image" src="img/anatomia-muscular.jpg" alt="Anatomía muscular" class="anatomy-image">
-            <div id="anatomy-overlay" class="anatomy-overlay"></div>
-            <div id="markers-container" class="markers-container"></div>
-          </div>
-
-          <!-- Formulario de detalles del área -->
-          <div id="area-detail-form" class="area-detail-form">
-            <h4>Nueva área</h4>
-            
-            <div class="form-group">
-              <label for="area-severity">Severidad:</label>
-              <select id="area-severity" class="form-input" required>
-                <option value="leve">Leve</option>
-                <option value="moderada">Moderada</option>
-                <option value="grave">Grave</option>
-              </select>
+        <!-- Sección de Anatomía -->
+        <div id="anatomy-section" class="anatomy-section">
+            <div class="anatomy-container">
+                <div class="anatomy-image-container">
+                    <img src="img/anatomia-muscular.jpg" alt="Imagen anatómica" class="anatomy-image">
+                    <div class="anatomy-overlay"></div>
+                    <div class="marker-container"></div>
+                </div>
             </div>
 
-            <div class="form-group">
-              <label for="area-evolution">Evolución:</label>
-              <select id="area-evolution" class="form-input" required>
-                <option value="estable">Estable</option>
-                <option value="mejorando">Mejorando</option>
-                <option value="empeorando">Empeorando</option>
-              </select>
-            </div>
+            <!-- Formulario de detalles del área -->
+            <form id="area-detail-form" class="area-detail-form">
+                <h4>Nueva área</h4>
+                
+                <div class="form-group">
+                    <label for="area-name">Nombre del área:</label>
+                    <input type="text" id="area-name" class="form-input" required>
+                </div>
 
-            <div class="form-group">
-              <label for="area-start-date">Fecha de inicio:</label>
-              <input type="date" id="area-start-date" class="form-input" required>
-            </div>
+                <div class="form-group">
+                    <label for="area-severity">Severidad:</label>
+                    <select id="area-severity" class="form-input" required>
+                        <option value="leve">Leve</option>
+                        <option value="moderado">Moderado</option>
+                        <option value="severo">Severo</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-              <label for="area-impact">Impacto funcional:</label>
-              <select id="area-impact" class="form-input" required>
-                <option value="ninguno">Ninguno</option>
-                <option value="leve">Leve</option>
-                <option value="moderado">Moderado</option>
-                <option value="severo">Severo</option>
-              </select>
-            </div>
+                <div class="form-group">
+                    <label for="area-evolution">Evolución:</label>
+                    <select id="area-evolution" class="form-input" required>
+                        <option value="estable">Estable</option>
+                        <option value="mejorando">Mejorando</option>
+                        <option value="empeorando">Empeorando</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-              <label for="area-interventions">Intervenciones:</label>
-              <select id="area-interventions" class="form-input" multiple>
-                <option value="fisioterapia">Fisioterapia</option>
-                <option value="terapia-ocupacional">Terapia ocupacional</option>
-                <option value="logopedia">Logopedia</option>
-                <option value="hidroterapia">Hidroterapia</option>
-                <option value="ortesis">Ortesis</option>
-                <option value="farmacologico">Tratamiento farmacológico</option>
-                <option value="observacion">Observación</option>
-              </select>
-            </div>
+                <div class="form-group">
+                    <label for="area-start-date">Fecha de inicio:</label>
+                    <input type="date" id="area-start-date" class="form-input" required>
+                </div>
 
-            <div class="form-actions">
-              <button type="button" id="btn-save-area" class="primary-btn">Guardar</button>
-              <button type="button" id="btn-cancel-area" class="secondary-btn">Cancelar</button>
-            </div>
-          </div>
+                <div class="form-group">
+                    <label for="area-impact">Impacto funcional:</label>
+                    <select id="area-impact" class="form-input" required>
+                        <option value="ninguno">Ninguno</option>
+                        <option value="leve">Leve</option>
+                        <option value="moderado">Moderado</option>
+                        <option value="severo">Severo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="area-interventions">Intervenciones:</label>
+                    <select id="area-interventions" class="form-input" multiple>
+                        <option value="fisioterapia">Fisioterapia</option>
+                        <option value="terapia-ocupacional">Terapia ocupacional</option>
+                        <option value="logopedia">Logopedia</option>
+                        <option value="hidroterapia">Hidroterapia</option>
+                        <option value="ortesis">Ortesis</option>
+                        <option value="farmacologico">Tratamiento farmacológico</option>
+                        <option value="observacion">Observación</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="btn-save-area" class="primary-btn">Guardar</button>
+                    <button type="button" id="btn-cancel-area" class="secondary-btn">Cancelar</button>
+                </div>
+            </form>
         </div>
         
         <!-- Contenedor para el gráfico de progresión -->
